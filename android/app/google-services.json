@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "844843116607",
+    "firebase_url": "https://bookversity-3dd46.firebaseio.com",
+    "project_id": "bookversity-3dd46",
+    "storage_bucket": "bookversity-3dd46.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844843116607:android:3a6953ed1369bb90c6f08a",
+        "android_client_info": {
+          "package_name": "mcmalloy.bookversity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "844843116607-mhisiofu61sq5ipo620fpr63ovesdlc0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAY7Y_hUFyTrLIK42DDMm2gfRFcCSj8AAU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "844843116607-mhisiofu61sq5ipo620fpr63ovesdlc0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
