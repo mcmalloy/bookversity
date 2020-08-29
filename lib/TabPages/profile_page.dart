@@ -17,47 +17,41 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Flexible(
-          flex: 2,
-          child: topSection()
-        ),
-        Flexible(
-            flex: 1,
-            child: middleSection()
-        ),
-        Flexible(
-            flex: 2,
-            child: bottomSection())
+        Flexible(flex: 1, child: Container(child: topSection(),color: CustomColors.materialLightGreen,)),
+        Flexible(flex: 2, child:Container(child: middleSection(),color: CustomColors.materialYellow,)),
+        Flexible(flex: 3, child: Container(child: bottomSection(),color: CustomColors.materialDarkGreen,))
       ],
     );
   }
 
-  Widget topSection(){
+  Widget topSection() {
     print("TOPSECTION");
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(15.0),
+            height: 20,
+            width: 300
+        ),
+        Container(
+          padding: const EdgeInsets.all(12.0),
           decoration: new BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
           ),
           child: new Icon(
-            FontAwesomeIcons.facebookF,
+            Icons.exit_to_app,
             color: Color(0xFF0084ff),
           ),
         )
       ],
     );
   }
-  Widget middleSection(){
-    return Row(
 
-    );
+  Widget middleSection() {
+    return Row();
   }
-  Widget bottomSection(){
-    return Row(
 
-    );
+  Widget bottomSection() {
+    return Row();
   }
 }
