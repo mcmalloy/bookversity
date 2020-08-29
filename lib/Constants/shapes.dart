@@ -18,4 +18,13 @@ class CustomShapes {
             bottomRight: Radius.circular(12),
             bottomLeft: Radius.circular(20)));
   }
+
+  RoundedRectangleBorder customButtonShape(){
+    return RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(38),
+            topRight: Radius.circular(38),
+            bottomRight: Radius.circular(40),
+            bottomLeft: Radius.circular(40)));
+  }
 }

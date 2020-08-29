@@ -1,7 +1,8 @@
 import 'package:bookversity/Constants/button_switch_color_animation.dart';
 import 'package:bookversity/Constants/shapes.dart';
 import 'package:bookversity/Services/auth.dart';
-import 'package:bookversity/profile_page.dart';
+import 'package:bookversity/tab_pages.dart';
+import 'file:///C:/Users/markm/AndroidStudioProjects/bookversity/lib/TabPages/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flare_flutter/flare_actor.dart';
@@ -145,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 70),
+                padding: EdgeInsets.only(bottom: 100),
                 child: GestureDetector(
                   child: Container(
                     padding: const EdgeInsets.all(15.0),
@@ -159,14 +160,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   onTap: () async {
-                    FacebookLoginStatus result = await _authService.facebookLogin();
-                    if(result == FacebookLoginStatus.loggedIn){
+                    FacebookLoginStatus result =
+                        await _authService.facebookLogin();
+                    if (result == FacebookLoginStatus.loggedIn) {
                       // TODO: LOG USER IN
                       Navigator.push(
                           context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()));
-                    }
-                    else if(result == FacebookLoginStatus.error){
+                          MaterialPageRoute(
+                              builder: (context) => TabPages()));
+                    } else if (result == FacebookLoginStatus.error) {
                       // TODO: Display facebook login error
                     }
                   },
@@ -197,20 +199,35 @@ class _LoginPageState extends State<LoginPage> {
             height: 25,
           ),
           Container(
-            height: 85,
+            height: 40,
             width: 250,
             child: RaisedButton(
-              color: Colors.green,
+              shape: _shapes.customButtonShape(),
+              color: CustomColors.materialYellow,
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               onPressed: () async {
                 //TODO: LOGIN HERE
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()));                //FirebaseUser anonUser = await _authService.anonSignIn();
+                print("Attempting login with "+_emailTextController.text+" : "+_passwordController.text);
+                FirebaseUser user = await _authService.emailSignIn(_emailTextController.text, _passwordController.text);
+                if(user!=null){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              TabPages()));
+                }
+                else{
+                  //TODO: Catch incorrect login
+                }
+                 //FirebaseUser anonUser = await _authService.anonSignIn();
                 //FirebaseUser emailUser = await _authService.emailSignIn("markmalloy96@yahoo.dk", "Test1234");
               },
-              child: Text("Login"),
+              child: Text("Login",
+                  style: TextStyle(
+                      color: CustomColors.materialDarkGreen,
+                      fontSize: 16,
+                      fontFamily: "WorkSansSemiBold")),
             ),
           )
         ],
@@ -236,17 +253,24 @@ class _LoginPageState extends State<LoginPage> {
             height: 25,
           ),
           Container(
-            height: 85,
+            height: 40,
             width: 250,
             child: MaterialButton(
-              color: CustomColors.materialDarkGreen,
+              shape: _shapes.customButtonShape(),
+              color: CustomColors.materialYellow,
               splashColor: Colors.transparent,
               highlightColor: CustomColors.loginGradientEnd,
               onPressed: () {
                 _authService.createEmailUser(_emailSignUpController.text,
                     _passwordSignUpController.text);
               },
-              child: Text("Sign up"),
+              child: Text(
+                "Sign up",
+                style: TextStyle(
+                    color: CustomColors.materialDarkGreen,
+                    fontSize: 16,
+                    fontFamily: "WorkSansSemiBold"),
+              ),
             ),
           )
         ],
@@ -259,7 +283,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: TextField(
+          child: TextFormField(
             controller: _emailTextController,
             style: TextStyle(
                 fontFamily: "WorkSansSemiBold",
@@ -282,7 +306,7 @@ class _LoginPageState extends State<LoginPage> {
         Container(height: 1, color: Colors.grey[400]),
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: TextField(
+          child: TextFormField(
             controller: _passwordController,
             style: TextStyle(
                 fontFamily: "WorkSansSemiBold",
@@ -311,7 +335,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: TextField(
+          child: TextFormField(
             controller: _emailSignUpController,
             style: TextStyle(
                 fontFamily: "WorkSansSemiBold",
@@ -334,7 +358,7 @@ class _LoginPageState extends State<LoginPage> {
         Container(height: 1, color: Colors.grey[400]),
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: TextField(
+          child: TextFormField(
             controller: _passwordSignUpController,
             style: TextStyle(
                 fontFamily: "WorkSansSemiBold",
