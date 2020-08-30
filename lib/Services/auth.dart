@@ -1,13 +1,16 @@
 import 'dart:math';
 
+import 'package:bookversity/Services/state_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FacebookLogin facebookSignIn = FacebookLogin();
-
+  final StateStorageService _storageService = StateStorageService();
+  static String facebookUID;
   // Sign in anonymously
   Future<FirebaseUser> anonSignIn() async {
     try{
@@ -39,6 +42,8 @@ class AuthService {
     final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
       if(result.status == FacebookLoginStatus.loggedIn){
         final FacebookAccessToken accessToken = result.accessToken;
+        _storageService.saveFacebookUID(accessToken.userId);
+        facebookUID = accessToken.userId;
         print('''
          Logged in!
          Token: ${accessToken.token}
@@ -61,7 +66,6 @@ class AuthService {
   }
 
   Future<bool> facebookLogout() async {
-    print(await facebookSignIn.isLoggedIn);
     await facebookSignIn.logOut();
     bool isLoggedIn = await facebookSignIn.isLoggedIn;
     print("Facebook isLoggedIn: $isLoggedIn");
@@ -71,6 +75,10 @@ class AuthService {
     else{
       return false;
     }
+  }
+
+  String getProfilePictureUri() {
+    return "http://graph.facebook.com/$facebookUID/picture?type=square";
   }
 
 

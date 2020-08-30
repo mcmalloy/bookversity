@@ -1,8 +1,8 @@
 import 'package:bookversity/Constants/button_switch_color_animation.dart';
 import 'package:bookversity/Constants/shapes.dart';
 import 'package:bookversity/Services/auth.dart';
+import 'package:bookversity/Services/state_storage.dart';
 import 'package:bookversity/tab_pages.dart';
-import 'file:///C:/Users/markm/AndroidStudioProjects/bookversity/lib/TabPages/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flare_flutter/flare_actor.dart';
