@@ -42,18 +42,18 @@ class _TabPagesState extends State<TabPages> {
         Tab(
           icon: Icon(
             FontAwesomeIcons.user,
-            color: CustomColors.materialYellow,
+            color: CustomColors.materialDarkGreen,
           ),
         ),
         Tab(
           icon: Icon(
               Icons.dashboard,
-              color: CustomColors.materialYellow),
+              color: CustomColors.materialDarkGreen),
         ),
         Tab(
           icon: Icon(
               FontAwesomeIcons.facebookMessenger,
-              color: CustomColors.materialYellow),
+              color: CustomColors.materialDarkGreen),
         ),
       ],
     );

@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         isLoading: true,
         startAnimation: '1',
         loopAnimation: '1',
-        endAnimation: '1',
+        endAnimation: '5',
         backgroundColor: CustomColors.materialLightGreen,
 
       )
