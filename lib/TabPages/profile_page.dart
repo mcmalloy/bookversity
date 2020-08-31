@@ -21,7 +21,6 @@ class _ProfilePageState extends State<ProfilePage> {
   AuthService _authService = AuthService();
   final StateStorageService _storageService = StateStorageService();
   String profilePictureLink;
-
   @override
   initState() {
     // TODO: implement initState
@@ -30,7 +29,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getProfileID() async {
-    profilePictureLink = await _storageService.getFacebookUID();
+    String _profilePictureLink = await _storageService.getFacebookUID();
+    profilePictureLink = _profilePictureLink;
     print("profile link acquired!");
   }
 

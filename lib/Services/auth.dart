@@ -32,7 +32,7 @@ class AuthService {
     return user;
   }
 
-  Future createEmailUser(String email,String password) async {
+  Future<int> createEmailUser(String email,String password) async {
     AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
     FirebaseUser user = result.user;
     user.sendEmailVerification();

@@ -146,38 +146,79 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 100),
-                child: GestureDetector(
-                  child: Container(
-                    padding: const EdgeInsets.all(15.0),
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    child: new Icon(
-                      FontAwesomeIcons.facebookF,
-                      color: Color(0xFF0084ff),
-                    ),
-                  ),
-                  onTap: () async {
-                    FacebookLoginStatus result =
-                        await _authService.facebookLogin();
-                    if (result == FacebookLoginStatus.loggedIn) {
-                      // TODO: LOG USER IN
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TabPages()));
-                    } else if (result == FacebookLoginStatus.error) {
-                      // TODO: Display facebook login error
-                    }
-                  },
-                ),
+                padding: EdgeInsets.only(bottom: 110),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    facebookIconButton(),
+                    SizedBox(height: 1,width: 50,),
+                    googleIconButton()
+                  ],
+                )
               ),
+
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget facebookIconButton(){
+    return GestureDetector(
+      child: Container(
+        padding: const EdgeInsets.all(15.0),
+        decoration: new BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+        ),
+        child: new Icon(
+          FontAwesomeIcons.facebookF,
+          color: CustomColors.materialDarkGreen,
+        ),
+      ),
+      onTap: () async {
+        FacebookLoginStatus result =
+        await _authService.facebookLogin();
+        if (result == FacebookLoginStatus.loggedIn) {
+          // TODO: LOG USER IN
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => TabPages()));
+        } else if (result == FacebookLoginStatus.error) {
+          // TODO: Display facebook login error
+        }
+      },
+    );
+  }
+
+  Widget googleIconButton(){
+    return GestureDetector(
+      child: Container(
+        padding: const EdgeInsets.all(15.0),
+        decoration: new BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+        ),
+        child: new Icon(
+          FontAwesomeIcons.google,
+          color: CustomColors.materialDarkGreen,
+        ),
+      ),
+      onTap: () async {
+        FacebookLoginStatus result =
+        await _authService.facebookLogin();
+        if (result == FacebookLoginStatus.loggedIn) {
+          // TODO: LOG USER IN
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => TabPages()));
+        } else if (result == FacebookLoginStatus.error) {
+          // TODO: Display facebook login error
+        }
+      },
     );
   }
 
@@ -260,9 +301,10 @@ class _LoginPageState extends State<LoginPage> {
               color: CustomColors.materialYellow,
               splashColor: Colors.transparent,
               highlightColor: CustomColors.loginGradientEnd,
-              onPressed: () {
+              onPressed: () async {
                 _authService.createEmailUser(_emailSignUpController.text,
                     _passwordSignUpController.text);
+                //TODO: Show alertdialog that confirms "An email was sent to you for confirmation
               },
               child: Text(
                 "Sign up",
