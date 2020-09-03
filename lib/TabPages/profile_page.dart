@@ -1,15 +1,8 @@
-import 'package:bookversity/Constants/profile_clipper.dart';
+import 'package:bookversity/Constants/loginType.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/state_storage.dart';
+import 'package:bookversity/Widgets/shapes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import '../Constants/custom_colors.dart';
-import '../Constants/custom_colors.dart';
-import '../Constants/custom_colors.dart';
-import '../Constants/custom_colors.dart';
-import '../Constants/custom_colors.dart';
 import '../Constants/custom_colors.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -21,17 +14,28 @@ class _ProfilePageState extends State<ProfilePage> {
   AuthService _authService = AuthService();
   final StateStorageService _storageService = StateStorageService();
   String profilePictureLink;
+  CustomShapes _shapes = CustomShapes();
+  LoginType _type;
   @override
   initState() {
     // TODO: implement initState
     super.initState();
+    getSignInType();
     getProfileID();
+  }
+
+  void getSignInType() {
+    setState(() {
+      _type = _authService.getSignInType();
+    });
   }
 
   Future<void> getProfileID() async {
     String _profilePictureLink = await _storageService.getFacebookUID();
-    profilePictureLink = _profilePictureLink;
-    print("profile link acquired!");
+    setState(() {
+      profilePictureLink = _profilePictureLink;
+      print("profile link acquired!");
+    });
   }
 
   @override
@@ -51,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Flexible(
               flex: 4,
               child: Container(
-                child: topSection(),
+                child: determineTopLayout(),
               )),
           Flexible(
               flex: 2,
@@ -74,45 +78,27 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget topSection() {
-    return Column(children: <Widget>[
-      Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                CustomColors.materialDarkGreen,
-                CustomColors.materialDarkGreen
-              ])),
-          child: Center(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                profilePictureLink == null
-                    ? Icon(Icons.person)
-                    : CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            "http://graph.facebook.com/$profilePictureLink/picture?type=large"),
-                        radius: 50.0,
-                      ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                SizedBox(
-                  height: 10.0,
-                )
-              ])))
-    ]);
-  }
-
   Widget middleSection() {
     return Row();
   }
 
   Widget bottomSection() {
-    return Row();
+    return Container(
+      padding: EdgeInsets.only(top: 200),
+        child: RaisedButton(
+      shape: _shapes.customButtonShape(),
+      color: CustomColors.materialYellow,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      onPressed: () async {
+        Navigator.pop(context);
+      },
+      child: Text("Logout",
+          style: TextStyle(
+              color: CustomColors.materialDarkGreen,
+              fontSize: 16,
+              fontFamily: "WorkSansSemiBold")),
+    ));
   }
 
   Widget logoutButton() {
@@ -138,5 +124,44 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       },
     );
+  }
+
+  Widget determineTopLayout() {
+    if (_type == LoginType.facebookSignIn) {
+      return Column(children: <Widget>[
+        Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      CustomColors.materialDarkGreen,
+                      CustomColors.materialDarkGreen
+                    ])),
+            child: Center(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      profilePictureLink == null
+                          ? CircularProgressIndicator()
+                          : CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            "http://graph.facebook.com/$profilePictureLink/picture?type=large"),
+                        radius: 50.0,
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      )
+                    ])))
+      ]);
+    } else if (_type == LoginType.googleSignIn) {
+      return Container();
+    } else if (_type == LoginType.emailSignIn) {
+      return Container();
+    }
   }
 }

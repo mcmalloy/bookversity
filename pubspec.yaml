@@ -36,6 +36,7 @@ dependencies:
   cloud_firestore: ^0.13.0+1
   firebase_core: ^0.4.2+1
   flutter_facebook_login: ^3.0.0
+  google_sign_in: ^4.5.3
   font_awesome_flutter: ^8.8.1
   shared_preferences: ^0.5.4+8
   cached_network_image: ^2.3.1

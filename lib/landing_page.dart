@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:bookversity/Constants/button_switch_color_animation.dart';
-import 'package:bookversity/Constants/shapes.dart';
+import 'package:bookversity/Constants/loginType.dart';
+import 'file:///C:/Users/markm/AndroidStudioProjects/bookversity/lib/Widgets/shapes.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/state_storage.dart';
+import 'package:bookversity/Widgets/dialogs.dart';
 import 'package:bookversity/tab_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -31,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   Color signUpButtonColor;
 
   CustomShapes _shapes = new CustomShapes();
+  CustomDialogs _dialogs = new CustomDialogs();
   @override
   void initState() {
     super.initState();
@@ -101,6 +106,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    LoginType loginType;
     return Scaffold(
       backgroundColor: CustomColors.materialLightGreen,
       body: SingleChildScrollView(
@@ -112,13 +118,16 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 75.0),
-                child: new Image(
-                  width: 250,
-                  height: 191,
-                  fit: BoxFit.fill,
-                  image: new AssetImage('assets/booklogo.jpg'),
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 75.0),
+                  child: new Image(
+                    width: 200,
+                    height: 150,
+                    fit: BoxFit.fill,
+                    image: new AssetImage('assets/booklogo.jpg'),
+                  ),
                 ),
               ),
               Padding(
@@ -126,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: loginSelector(),
               ),
               Expanded(
-                flex: 2,
+                flex: 3,
                 child: PageView(
                   controller: _pageController,
                   children: [_signInPage(), _signUpPage()],
@@ -146,17 +155,14 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 110),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    facebookIconButton(),
-                    SizedBox(height: 1,width: 50,),
-                    googleIconButton()
-                  ],
-                )
-              ),
-
+                  padding: EdgeInsets.only(bottom: 110),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      facebookIconButton(),
+                      googleIconButton()
+                    ],
+                  )),
             ],
           ),
         ),
@@ -164,28 +170,43 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget facebookIconButton(){
+  Widget forgotPasswordText(){
+    return Padding(
+      padding: EdgeInsets.only(top: 20),
+      child: InkWell(
+        child: Text(
+          "Forgot password?",
+          style: TextStyle(fontSize: 14,color: CustomColors.materialYellow),),
+        onTap: (){
+          //_authService.forgotPassword();
+          _dialogs.resetPasswordDialog(context);
+        },
+      )
+    );
+  }
+
+  Widget facebookIconButton() {
     return GestureDetector(
-      child: Container(
-        padding: const EdgeInsets.all(15.0),
-        decoration: new BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-        ),
-        child: new Icon(
-          FontAwesomeIcons.facebookF,
-          color: CustomColors.materialDarkGreen,
-        ),
+      child: Padding(
+        padding: EdgeInsets.only(right: 20),
+        child: Container(
+      padding: const EdgeInsets.all(15.0),
+      decoration: new BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+      ),
+      child: new Icon(
+        FontAwesomeIcons.facebookF,
+        color: CustomColors.materialDarkGreen,
+      ),
+    ),
       ),
       onTap: () async {
-        FacebookLoginStatus result =
-        await _authService.facebookLogin();
+        FacebookLoginStatus result = await _authService.facebookLogin();
         if (result == FacebookLoginStatus.loggedIn) {
           // TODO: LOG USER IN
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TabPages()));
+              context, MaterialPageRoute(builder: (context) => TabPages()));
         } else if (result == FacebookLoginStatus.error) {
           // TODO: Display facebook login error
         }
@@ -193,30 +214,28 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget googleIconButton(){
+  Widget googleIconButton() {
     return GestureDetector(
-      child: Container(
-        padding: const EdgeInsets.all(15.0),
-        decoration: new BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-        ),
-        child: new Icon(
-          FontAwesomeIcons.google,
-          color: CustomColors.materialDarkGreen,
+      child: Padding(
+        padding: EdgeInsets.only(left: 20),
+        child: Container(
+          padding: const EdgeInsets.all(15.0),
+          decoration: new BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+          ),
+          child: new Icon(
+            FontAwesomeIcons.google,
+            color: CustomColors.materialDarkGreen,
+          ),
         ),
       ),
       onTap: () async {
-        FacebookLoginStatus result =
-        await _authService.facebookLogin();
-        if (result == FacebookLoginStatus.loggedIn) {
+        bool loginStatus = await _authService.googleLogin();
+        if (loginStatus) {
           // TODO: LOG USER IN
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TabPages()));
-        } else if (result == FacebookLoginStatus.error) {
-          // TODO: Display facebook login error
+              context, MaterialPageRoute(builder: (context) => TabPages()));
         }
       },
     );
@@ -239,6 +258,7 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 25,
           ),
+
           Container(
             height: 40,
             width: 250,
@@ -248,20 +268,19 @@ class _LoginPageState extends State<LoginPage> {
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               onPressed: () async {
-                //TODO: LOGIN HERE
-                print("Attempting login with "+_emailTextController.text+" : "+_passwordController.text);
-                FirebaseUser user = await _authService.emailSignIn(_emailTextController.text, _passwordController.text);
-                if(user!=null){
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              TabPages()));
-                }
-                else{
+                print("Attempting login with " +
+                    _emailTextController.text +
+                    " : " +
+                    _passwordController.text);
+                FirebaseUser user = await _authService.emailSignIn(
+                    _emailTextController.text, _passwordController.text);
+                if (user != null) {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => TabPages()));
+                } else {
                   //TODO: Catch incorrect login
                 }
-                 //FirebaseUser anonUser = await _authService.anonSignIn();
+                //FirebaseUser anonUser = await _authService.anonSignIn();
                 //FirebaseUser emailUser = await _authService.emailSignIn("markmalloy96@yahoo.dk", "Test1234");
               },
               child: Text("Login",
@@ -270,7 +289,8 @@ class _LoginPageState extends State<LoginPage> {
                       fontSize: 16,
                       fontFamily: "WorkSansSemiBold")),
             ),
-          )
+          ),
+          forgotPasswordText()
         ],
       ),
     );
