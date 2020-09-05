@@ -16,6 +16,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String profilePictureLink;
   CustomShapes _shapes = CustomShapes();
   LoginType _type;
+
   @override
   initState() {
     // TODO: implement initState
@@ -49,21 +50,21 @@ class _ProfilePageState extends State<ProfilePage> {
           color: CustomColors.materialLightGreen,
         ),
       ),
-      backgroundColor: CustomColors.materialLightGreen,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
-          Flexible(
-              flex: 4,
+          Expanded(
+              flex: 3,
               child: Container(
                 child: determineTopLayout(),
               )),
-          Flexible(
+          Expanded(
               flex: 2,
               child: Container(
                 child: middleSection(),
               )),
-          Flexible(
-              flex: 3,
+          Expanded(
+              flex: 1,
               child: Container(
                 child: bottomSection(),
               ))
@@ -79,34 +80,48 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget middleSection() {
-    return Row();
+    return Container(
+      padding: EdgeInsets.only(left: 15, right: 15),
+      width: MediaQuery.of(context).size.width - 30,
+      decoration: ShapeDecoration(
+        color: CustomColors.materialDarkGreen,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+      child: Column(
+        children: [
+          Text("Mine opslag",style: TextStyle(color: Colors.white,fontSize: 22)),
+          SizedBox(height: 25,),
+          ListView()
+        ],
+      ),
+    );
   }
 
   Widget bottomSection() {
     return Container(
-      height: 50,
-      width: 250,
-      padding: EdgeInsets.only(bottom: 20),
+        height: 50,
+        width: 200,
+        padding: EdgeInsets.only(top: 60, bottom: 20),
         child: RaisedButton(
-      shape: _shapes.customButtonShape(),
-      color: CustomColors.materialYellow,
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      onPressed: () async {
-        bool loggedOutSuccessfully = await _authService.fireBaseLogOut();
-        if (loggedOutSuccessfully) {
-          // TODO: LOG USER IN
-          Navigator.pop(context);
-        } else {
-          // TODO: Display facebook login error
-        }
-      },
-      child: Text("Logout",
-          style: TextStyle(
-              color: CustomColors.materialDarkGreen,
-              fontSize: 16,
-              fontFamily: "WorkSansSemiBold")),
-    ));
+          shape: _shapes.customButtonShape(),
+          color: CustomColors.materialYellow,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onPressed: () async {
+            bool loggedOutSuccessfully = await _authService.fireBaseLogOut();
+            if (loggedOutSuccessfully) {
+              // TODO: LOG USER IN
+              Navigator.pop(context);
+            } else {
+              // TODO: Display facebook login error
+            }
+          },
+          child: Text("Logout",
+              style: TextStyle(
+                  color: CustomColors.materialDarkGreen,
+                  fontSize: 16,
+                  fontFamily: "WorkSansSemiBold")),
+        ));
   }
 
   Widget logoutButton() {
@@ -143,28 +158,28 @@ class _ProfilePageState extends State<ProfilePage> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      CustomColors.materialDarkGreen,
-                      CustomColors.materialDarkGreen
-                    ])),
+                  CustomColors.materialDarkGreen,
+                  CustomColors.materialDarkGreen
+                ])),
             child: Center(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      profilePictureLink == null
-                          ? CircularProgressIndicator()
-                          : CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            "http://graph.facebook.com/$profilePictureLink/picture?type=large"),
-                        radius: 50.0,
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      )
-                    ])))
+                  profilePictureLink == null
+                      ? CircularProgressIndicator()
+                      : CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              "http://graph.facebook.com/$profilePictureLink/picture?type=large"),
+                          radius: 50.0,
+                        ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  )
+                ])))
       ]);
     } else if (_type == LoginType.googleSignIn) {
       return Container();
