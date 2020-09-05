@@ -84,7 +84,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget bottomSection() {
     return Container(
-      padding: EdgeInsets.only(top: 200),
+      height: 50,
+      width: 250,
+      padding: EdgeInsets.only(bottom: 20),
         child: RaisedButton(
       shape: _shapes.customButtonShape(),
       color: CustomColors.materialYellow,

@@ -202,12 +202,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       onTap: () async {
-        FacebookLoginStatus result = await _authService.facebookLogin();
-        if (result == FacebookLoginStatus.loggedIn) {
+        User userResult = await _authService.facebookLogin();
+        if (userResult != null) {
           // TODO: LOG USER IN
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => TabPages()));
-        } else if (result == FacebookLoginStatus.error) {
+        } else {
           // TODO: Display facebook login error
         }
       },
@@ -231,8 +231,9 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       onTap: () async {
-        bool loginStatus = await _authService.googleLogin();
-        if (loginStatus) {
+        User userResult = await _authService.googleLogin();
+        print("userResult from google sign in: $userResult");
+        if (userResult!=null) {
           // TODO: LOG USER IN
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => TabPages()));

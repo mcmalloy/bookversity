@@ -1,7 +1,7 @@
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/TabPages/profile_page.dart';
-import 'TabPages/chat_list.dart';
-import 'TabPages/item_list.dart';
+import 'TabPages/chat_list_page.dart';
+import 'TabPages/item_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
