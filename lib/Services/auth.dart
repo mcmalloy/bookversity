@@ -15,12 +15,15 @@ class AuthService {
   final StateStorageService _storageService = StateStorageService();
   static LoginType _loginType;
   static String facebookUID;
+  User user;
+  UserCredential userCredential;
   // Sign in anonymously
-  Future<FirebaseUser> anonSignIn() async {
+  Future<User> anonSignIn() async {
     try{
-      AuthResult result = await _auth.signInAnonymously();
-      FirebaseUser user = result.user;
-      print("Firebase response: $result");
+      _auth.signInAnonymously();
+      UserCredential userCredential = await _auth.signInAnonymously();
+      user = userCredential.user;
+      print("Firebase response: $userCredential");
       print("Firebase user: $user");
       return user;
     } catch(e){
@@ -29,14 +32,14 @@ class AuthService {
     }
   }
   Future<int> createEmailUser(String email,String password) async {
-    AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-    FirebaseUser user = result.user;
+    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    user = userCredential.user;
     user.sendEmailVerification();
   }
   // Sign in with email and password
-  Future<FirebaseUser> emailSignIn(String email, String password) async {
-    AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-    FirebaseUser user = result.user;
+  Future<User> emailSignIn(String email, String password) async {
+    UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+    User user = userCredential.user;
     if(user != null){
       _loginType = LoginType.facebookSignIn;
       return user;
@@ -52,32 +55,39 @@ class AuthService {
     }
 
   }
-
-
-
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  Future<bool> googleLogin() async {
+    GoogleSignInAccount user = await _googleSignIn.signIn();
+    if(user != null){
+      _loginType = LoginType.googleSignIn;
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
   Future<FacebookLoginStatus> facebookLogin() async {
     final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
       if(result.status == FacebookLoginStatus.loggedIn){
-        _loginType = LoginType.facebookSignIn;
+        // Set the accessToken and use it for signing in with Firebase as a firebase user
         final FacebookAccessToken accessToken = result.accessToken;
+        // Set the loginType to facebookSignIn, such that the profile page will load a profile image
+        _loginType = LoginType.facebookSignIn;
         _storageService.saveFacebookUID(accessToken.userId);
-        facebookUID = accessToken.userId;
-        print('''
-         Logged in!
-         Token: ${accessToken.token}
-         User id: ${accessToken.userId}
-         Expires: ${accessToken.expires}
-         Permissions: ${accessToken.permissions}
-         Declined permissions: ${accessToken.declinedPermissions}
-         ''');
+        print("Retrieving authCredentials from accesToken: ${accessToken.token}");
+        // Authenticate the facebook user with firebase and officially log in as a firebase User
+        AuthCredential credential= FacebookAuthProvider.credential(accessToken.token);
+        userCredential = await _auth.signInWithCredential(credential);
+        print("UserCredential from firebase: ${userCredential.credential}");
+        print("User from firebase: ${userCredential.user}");
+        print("Additional info from firebase: ${userCredential.additionalUserInfo}");
         return result.status;
       }
       else if(result.status == FacebookLoginStatus.cancelledByUser){
         print('Login cancelled by the user.');
       }
       else{
-        print('Something went wrong with the login process.\n'
-            'Here\'s the error Facebook gave us: ${result.errorMessage}');
+        print('Something went wrong with the login process.. ${result.errorMessage}');
         return result.status;
       }
       return null;
@@ -95,23 +105,20 @@ class AuthService {
     }
   }
 
+  Future<bool> fireBaseLogOut() async {
+    await _auth.signOut();
+    User currentUser = _auth.currentUser;
+    if(currentUser == null){
+      print("Logged out succesfully");
+      return true;
+    }
+    return false;
+  }
+
   String getProfilePictureUri() {
     return "http://graph.facebook.com/$facebookUID/picture?type=square";
   }
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final Firestore _db = Firestore.instance;
-  Future<bool> googleLogin() async {
-    print("Trying to log in");
-    GoogleSignInAccount user = await _googleSignIn.signIn();
-    if(user != null){
-      _loginType = LoginType.googleSignIn;
-      return true;
-    }
-    else{
-      return false;
-    }
-  }
 
   LoginType getSignInType(){
     return _loginType;

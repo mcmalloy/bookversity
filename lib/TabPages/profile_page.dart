@@ -91,7 +91,13 @@ class _ProfilePageState extends State<ProfilePage> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onPressed: () async {
-        Navigator.pop(context);
+        bool loggedOutSuccessfully = await _authService.fireBaseLogOut();
+        if (loggedOutSuccessfully) {
+          // TODO: LOG USER IN
+          Navigator.pop(context);
+        } else {
+          // TODO: Display facebook login error
+        }
       },
       child: Text("Logout",
           style: TextStyle(
@@ -115,8 +121,8 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       onTap: () async {
-        bool logoutResult = await _authService.facebookLogout();
-        if (!logoutResult) {
+        bool loggedOutSuccessfully = await _authService.fireBaseLogOut();
+        if (loggedOutSuccessfully) {
           // TODO: LOG USER IN
           Navigator.pop(context);
         } else {

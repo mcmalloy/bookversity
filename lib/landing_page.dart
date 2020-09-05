@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:bookversity/Constants/button_switch_color_animation.dart';
 import 'package:bookversity/Constants/loginType.dart';
-import 'file:///C:/Users/markm/AndroidStudioProjects/bookversity/lib/Widgets/shapes.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/state_storage.dart';
 import 'package:bookversity/Widgets/dialogs.dart';
+import 'package:bookversity/Widgets/shapes.dart';
 import 'package:bookversity/tab_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -123,10 +123,10 @@ class _LoginPageState extends State<LoginPage> {
                 child: Padding(
                   padding: EdgeInsets.only(top: 75.0),
                   child: new Image(
-                    width: 200,
-                    height: 150,
+                    height: 200,
+                    width: 150,
                     fit: BoxFit.fill,
-                    image: new AssetImage('assets/booklogo.jpg'),
+                    image: new AssetImage('assets/bookversity_mascot_logo.png'),
                   ),
                 ),
               ),
@@ -158,10 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.only(bottom: 110),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      facebookIconButton(),
-                      googleIconButton()
-                    ],
+                    children: [facebookIconButton(), googleIconButton()],
                   )),
             ],
           ),
@@ -170,19 +167,22 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget forgotPasswordText(){
+  Widget forgotPasswordText() {
     return Padding(
-      padding: EdgeInsets.only(top: 20),
-      child: InkWell(
-        child: Text(
-          "Forgot password?",
-          style: TextStyle(fontSize: 14,color: CustomColors.materialYellow),),
-        onTap: (){
-          //_authService.forgotPassword();
-          _dialogs.resetPasswordDialog(context);
-        },
-      )
-    );
+        padding: EdgeInsets.only(top: 20),
+        child: InkWell(
+          child: Text(
+            "Forgot password?",
+            style: TextStyle(fontSize: 14, color: CustomColors.materialYellow),
+          ),
+          onTap: () {
+            //_authService.forgotPassword();
+            showDialog(
+                context: context,
+                builder: (_) => _dialogs.resetPasswordDialog(context),
+                barrierDismissible: true);
+          },
+        ));
   }
 
   Widget facebookIconButton() {
@@ -190,16 +190,16 @@ class _LoginPageState extends State<LoginPage> {
       child: Padding(
         padding: EdgeInsets.only(right: 20),
         child: Container(
-      padding: const EdgeInsets.all(15.0),
-      decoration: new BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-      ),
-      child: new Icon(
-        FontAwesomeIcons.facebookF,
-        color: CustomColors.materialDarkGreen,
-      ),
-    ),
+          padding: const EdgeInsets.all(15.0),
+          decoration: new BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+          ),
+          child: new Icon(
+            FontAwesomeIcons.facebookF,
+            color: CustomColors.materialDarkGreen,
+          ),
+        ),
       ),
       onTap: () async {
         FacebookLoginStatus result = await _authService.facebookLogin();
@@ -258,7 +258,6 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 25,
           ),
-
           Container(
             height: 40,
             width: 250,
