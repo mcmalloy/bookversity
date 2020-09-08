@@ -1,5 +1,6 @@
 import 'package:bookversity/Constants/loginType.dart';
 import 'package:bookversity/Services/auth.dart';
+import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Services/state_storage.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   AuthService _authService = AuthService();
+  FireStoreService _fireStoreService = FireStoreService();
   final StateStorageService _storageService = StateStorageService();
   String profilePictureLink;
   CustomShapes _shapes = CustomShapes();
@@ -53,21 +55,27 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          Expanded(
-              flex: 3,
-              child: Container(
-                child: determineTopLayout(),
-              )),
-          Expanded(
-              flex: 2,
-              child: Container(
-                child: middleSection(),
-              )),
-          Expanded(
-              flex: 1,
-              child: Container(
-                child: bottomSection(),
-              ))
+          Container(
+            child: determineTopLayout(),
+          ),
+          SizedBox(height: 30,),
+          Container(
+            height: 220,
+            child: bookDashBoard(),
+          ),
+          SizedBox(height: 30,),
+          RaisedButton(
+            shape: _shapes.customBoxShape1(),
+            color: CustomColors.materialLightGreen,
+            child: Text("Opret annonce"),
+            onPressed: (){
+
+            },
+          ),
+          SizedBox(height: 90,),
+          Container(
+            child: bottomSection(),
+          )
         ],
       ),
     );
@@ -79,29 +87,45 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget middleSection() {
+  Widget bookDashBoard() {
     return Container(
       padding: EdgeInsets.only(left: 15, right: 15),
       width: MediaQuery.of(context).size.width - 30,
       decoration: ShapeDecoration(
-        color: CustomColors.materialDarkGreen,
+          color: CustomColors.materialDarkGreen,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
       child: Column(
         children: [
-          Text("Mine opslag",style: TextStyle(color: Colors.white,fontSize: 22)),
-          SizedBox(height: 25,),
-          ListView()
+          Text("Mine opslag", style: montSerratFont()),
+          SizedBox(
+            height: 25,
+          ),
+          _fireStoreService.hasBooksForSale()
+              ? Container(
+                  height: 1,
+                ) // Show listview of books
+              : Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                      "Du har på nuværende tidspunkt ingen bøger til salg... Tryk på 'Sælg Bog' for at uploade"),
+                )
+          //ListView()
         ],
       ),
     );
+  }
+
+  montSerratFont() {
+    return TextStyle(
+        color: Colors.white, fontFamily: "Montserrat", fontSize: 20);
   }
 
   Widget bottomSection() {
     return Container(
         height: 50,
         width: 200,
-        padding: EdgeInsets.only(top: 60, bottom: 20),
+        padding: EdgeInsets.only(top: 15),
         child: RaisedButton(
           shape: _shapes.customButtonShape(),
           color: CustomColors.materialYellow,
@@ -153,14 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_type == LoginType.facebookSignIn) {
       return Column(children: <Widget>[
         Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                  CustomColors.materialDarkGreen,
-                  CustomColors.materialDarkGreen
-                ])),
+            color: CustomColors.materialLightGreen,
             child: Center(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -177,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 10.0,
                   ),
                   SizedBox(
-                    height: 10.0,
+                    height: 20.0,
                   )
                 ])))
       ]);
