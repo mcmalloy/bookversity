@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bookversity/Constants/loginType.dart';
 import 'package:bookversity/Pages/create_ad_page.dart';
 import 'package:bookversity/Services/auth.dart';
@@ -5,6 +7,7 @@ import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Services/state_storage.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../Constants/custom_colors.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -79,6 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     color: Colors.white),
               ),
               onPressed: () {
+                //pickImageFromGallery(ImageSource.gallery);
                 setState(() {
                   _showAdBox = true;
                 });
@@ -299,24 +303,47 @@ class _ProfilePageState extends State<ProfilePage> {
             child: formObject("price", Icons.attach_money, "Pris")),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
-          padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: TextFormField(
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              icon: Icon(
-                Icons.camera_enhance,
-                color: Colors.black,
-                size: 22.0,
-              ),
-              hintText: "Tag billede",
-              hintStyle: TextStyle(
-                  fontFamily: "Montserrat",
-                  fontSize: 22.0,
-                  color: CustomColors.materialDarkGreen),
-            ),
-            onTap: () {
-              //TODO: Open camera view
-            },
+          padding: EdgeInsets.only(top: 5, bottom: 20, left: 25, right: 25),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Indsæt billede",
+                  style: TextStyle(
+                      fontFamily: "Montserrat",
+                      fontSize: 22.0,
+                      color: CustomColors.materialDarkGreen)),
+              Padding(
+                  padding:
+                      EdgeInsets.only(top: 5, bottom: 20, left: 25, right: 25),
+                  child: InkWell(
+                    onTap: () {
+                      print("Image is != null statement: ${_image != null}");
+                      _imgFromGallery(ImageSource.gallery);
+                    },
+                    child: Container(
+                        height: 150,
+                        width: 220,
+                        padding: EdgeInsets.only(top: 40),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.grey.withOpacity(0.5)),
+                        child: _image == null
+                            ? Column(
+                                children: [
+                                  Icon(Icons.cloud_upload),
+                                  Text(
+                                    "Tryk for at åbne billeder fra galleri",
+                                    style: TextStyle(
+                                        fontFamily: "Montserrat",
+                                        fontSize: 16.0,
+                                        color: CustomColors.materialDarkGreen),
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                              )
+                            : showImage()),
+                  ))
+            ],
           ),
         )
       ],
@@ -325,7 +352,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget formObject(String type, IconData formIcon, String hintText) {
     return Container(
-      padding: EdgeInsets.only(left: 5),
+        padding: EdgeInsets.only(left: 5),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             color: Colors.grey.withOpacity(0.5)),
@@ -365,5 +392,27 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       return _priceController;
     }
+  }
+
+  final ImagePicker _picker = ImagePicker();
+  FileImage _image;
+
+  //Open gallery
+  Future<void> _imgFromGallery(ImageSource source) async {
+    try {
+      PickedFile pickedImage = await _picker.getImage(source: source);
+      print("Returning from gallery");
+      print("File path: ${pickedImage.path}");
+      setState(() {
+        _image = FileImage(File(pickedImage.path));
+        print("File has been picked");
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Image showImage() {
+    return Image(image: _image);
   }
 }
