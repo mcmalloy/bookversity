@@ -82,11 +82,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     color: Colors.white),
               ),
               onPressed: () {
-                //pickImageFromGallery(ImageSource.gallery);
                 setState(() {
                   _showAdBox = true;
                 });
-                //Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAddPage()));
               },
             ),
           ),
@@ -125,7 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           Text(
             "Mine opslag",
-            style: montSerratFont(),
+            style: montSerratFont(Colors.white),
           ),
           SizedBox(
             height: 25,
@@ -150,9 +148,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  montSerratFont() {
-    return TextStyle(
-        color: Colors.white, fontFamily: "Montserrat", fontSize: 20);
+  montSerratFont(Color color) {
+    return TextStyle(color: color, fontFamily: "Montserrat", fontSize: 20);
   }
 
   Widget bottomSection() {
@@ -254,32 +251,34 @@ class _ProfilePageState extends State<ProfilePage> {
       right: 50,
       bottom: _showAdBox ? 20 : MediaQuery.of(context).size.height,
       curve: Curves.easeInOutCubic,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                IconButton(
-                  padding: EdgeInsets.only(top: 18, left: 25),
-                  iconSize: 34,
-                  icon: Icon(Icons.keyboard_return),
-                  onPressed: () {
-                    setState(() {
-                      _showAdBox = !_showAdBox;
-                    });
-                  },
-                )
-              ],
-            ),
-            bookForm()
-            //TODO: Form goes in here
-          ],
+      child: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
+                    padding: EdgeInsets.only(top: 18, left: 25),
+                    iconSize: 34,
+                    icon: Icon(Icons.keyboard_return),
+                    onPressed: () {
+                      setState(() {
+                        _showAdBox = !_showAdBox;
+                      });
+                    },
+                  )
+                ],
+              ),
+              bookForm(),
+              //TODO: Form goes in here
+            ],
+          ),
         ),
       ),
     );
@@ -342,7 +341,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ],
                               )
                             : showImage()),
-                  ))
+                  )),
+              RaisedButton(
+                onPressed: () async {
+                  _fireStoreService.uploadBook(_bookNameController.text,
+                      _isbnController.text, _priceController.text, _pickedImage);
+                },
+                color: CustomColors.materialYellow,
+                child: Text(
+                  "Opret Annonce",
+                  style: montSerratFont(CustomColors.materialDarkGreen),
+                ),
+              )
             ],
           ),
         )
@@ -396,7 +406,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   final ImagePicker _picker = ImagePicker();
   FileImage _image;
-
+  File _pickedImage;
   //Open gallery
   Future<void> _imgFromGallery(ImageSource source) async {
     try {
@@ -405,6 +415,7 @@ class _ProfilePageState extends State<ProfilePage> {
       print("File path: ${pickedImage.path}");
       setState(() {
         _image = FileImage(File(pickedImage.path));
+        _pickedImage = File(pickedImage.path);
         print("File has been picked");
       });
     } catch (e) {
@@ -413,6 +424,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Image showImage() {
-    return Image(image: _image);
+    return Image(
+      image: _image,
+      fit: BoxFit.contain,
+    );
   }
 }
