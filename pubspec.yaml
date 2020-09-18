@@ -65,6 +65,8 @@ flutter:
   assets:
   - assets/bookversity_mascot_logo.png
   - assets/booklogo.jpg
+  - assets/bookversity_facebook_profile.png
+  - assets/bookversity_google_profile.png
   - assets/BookAnimation3.flr
   #   - images/a_dot_ham.jpeg
 

@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:bookversity/Constants/custom_colors.dart';
+import 'package:bookversity/Constants/loginType.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Services/state_storage.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileDashBoard extends StatefulWidget {
   @override
@@ -18,30 +22,88 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
   final StateStorageService _storageService = StateStorageService();
   String profilePictureLink;
   CustomShapes _shapes = CustomShapes();
+  LoginType _type;
+  final TextEditingController _bookNameController = TextEditingController();
+  final TextEditingController _isbnController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  @override
+  initState() {
+    // TODO: implement initState
+    super.initState();
+    getSignInType();
+    getProfileID();
+  }
+
+  void getSignInType() {
+    setState(() {
+      _type = _authService.getSignInType();
+    });
+  }
+
+  Future<void> getProfileID() async {
+    String _profilePictureLink = await _storageService.getFacebookUID();
+    setState(() {
+      profilePictureLink = _profilePictureLink;
+      print("profile link acquired!");
+    });
+  }
 
 
-
+  TextEditingController determineController(String type) {
+    if (type == "book") {
+      return _bookNameController;
+    } else if (type == "isbn") {
+      return _isbnController;
+    } else {
+      return _priceController;
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          SizedBox(
-            height: 120,
-          ),
-          Flexible(
-            flex: 2,
-            child: topDashBoardWidgets(),
-          ),
-          SizedBox(
-            height: 32,
-          ),
-          Flexible(
-            flex: 3,
-            child: centerDashBoardWidget(),
-          )
-        ],
-      ),
+    return Scaffold(
+      backgroundColor: CustomColors.materialLightGreen,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                SizedBox(
+                  height: 20,
+                ),
+                new Image(
+                  alignment: Alignment.topLeft,
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.fill,
+                  image: new AssetImage('assets/bookversity_facebook_profile.png'),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Flexible(
+                  flex: 2,
+                  child: topDashBoardWidgets(),
+                ),
+                SizedBox(
+                  height: 32,
+                ),
+                Flexible(
+                  flex: 3,
+                  child: centerDashBoardWidget(),
+                )
+              ],
+            ),
+            _showAdBox
+                ? Container(color: Colors.grey.withOpacity(0.7))
+                : Container(
+              height: 0,
+            ),
+            Container(
+              child: createAdBox(),
+            )
+          ],
+        )
+      )
     );
   }
 
@@ -59,8 +121,17 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
         SizedBox(
           width: 25,
         ),
-        dashBoardBox(200, 200, customBoxShape(Colors.red, Colors.orange),
-            "Ny annonce", 21, Icons.attach_money),
+        InkWell(
+          child: dashBoardBox(200, 200, customBoxShape(Colors.red, Colors.orange),
+              "Ny annonce", 21, Icons.attach_money),
+          onTap: (){
+            setState(() {
+              _showAdBox = true;
+            });
+            createAdBox();
+          },
+        ),
+
       ],
     );
   }
@@ -158,4 +229,180 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
             fontFamily: "Montserrat",
             color: CustomColors.materialDarkGreen),));
   }
+
+  Widget createAdBox() {
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 600),
+      top: _showAdBox ? 30 : -MediaQuery.of(context).size.height,
+      left: 50,
+      right: 50,
+      bottom: _showAdBox ? 20 : MediaQuery.of(context).size.height,
+      curve: Curves.easeInOutCubic,
+      child: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
+                    padding: EdgeInsets.only(top: 18, left: 25),
+                    iconSize: 34,
+                    icon: Icon(Icons.keyboard_return),
+                    onPressed: () {
+                      setState(() {
+                        _showAdBox = !_showAdBox;
+                      });
+                    },
+                  )
+                ],
+              ),
+              bookForm(),
+              //TODO: Form goes in here
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  Widget bookForm() {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
+          child: formObject("book", Icons.book, "Bogtitel"),
+        ),
+        Container(height: 1, color: Colors.grey[400]),
+        Padding(
+          padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
+          child: formObject("isbn", Icons.library_books, "ISBN Kode"),
+        ),
+        Container(height: 1, color: Colors.grey[400]),
+        Padding(
+            padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
+            child: formObject("price", Icons.attach_money, "Pris")),
+        Container(height: 1, color: Colors.grey[400]),
+        Padding(
+          padding: EdgeInsets.only(top: 5, bottom: 20, left: 25, right: 25),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Indsæt billede",
+                  style: TextStyle(
+                      fontFamily: "Montserrat",
+                      fontSize: 22.0,
+                      color: CustomColors.materialDarkGreen)),
+              Padding(
+                  padding:
+                  EdgeInsets.only(top: 5, bottom: 20, left: 25, right: 25),
+                  child: InkWell(
+                    onTap: () {
+                      print("Image is != null statement: ${_image != null}");
+                      _imgFromGallery(ImageSource.gallery);
+                    },
+                    child: Container(
+                        height: 150,
+                        width: 220,
+                        padding: EdgeInsets.only(top: 40),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.grey.withOpacity(0.5)),
+                        child: _image == null
+                            ? Column(
+                          children: [
+                            Icon(Icons.cloud_upload),
+                            Text(
+                              "Tryk for at åbne billeder fra galleri",
+                              style: TextStyle(
+                                  fontFamily: "Montserrat",
+                                  fontSize: 16.0,
+                                  color: CustomColors.materialDarkGreen),
+                              textAlign: TextAlign.center,
+                            )
+                          ],
+                        )
+                            : showImage()),
+                  )),
+              RaisedButton(
+                onPressed: () async {
+                  _fireStoreService.uploadBook(_bookNameController.text,
+                      _isbnController.text, _priceController.text, _pickedImage);
+                },
+                color: CustomColors.materialYellow,
+                child: Text(
+                  "Opret Annonce",
+                  style: montSerratFont(CustomColors.materialDarkGreen),
+                ),
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+  Widget formObject(String type, IconData formIcon, String hintText) {
+    return Container(
+        padding: EdgeInsets.only(left: 5),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.grey.withOpacity(0.5)),
+        child: TextFormField(
+          controller: determineController(type),
+          style: TextStyle(
+              fontFamily: "Montserrat",
+              fontSize: 16.0,
+              color: CustomColors.materialDarkGreen),
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            icon: Icon(
+              formIcon,
+              color: Colors.black,
+              size: 22.0,
+            ),
+            hintText: "$hintText",
+            hintStyle: TextStyle(
+                fontFamily: "Montserrat",
+                fontSize: 22.0,
+                color: CustomColors.materialDarkGreen),
+          ),
+          onChanged: (controller) {
+            print("Changed ${controller.toString()}");
+          },
+        ));
+  }
+
+  Image showImage() {
+    return Image(
+      image: _image,
+      fit: BoxFit.contain,
+    );
+  }
+
+  final ImagePicker _picker = ImagePicker();
+  FileImage _image;
+  File _pickedImage;
+  //Open gallery
+  Future<void> _imgFromGallery(ImageSource source) async {
+    try {
+      PickedFile pickedImage = await _picker.getImage(source: source);
+      print("Returning from gallery");
+      print("File path: ${pickedImage.path}");
+      setState(() {
+        _image = FileImage(File(pickedImage.path));
+        _pickedImage = File(pickedImage.path);
+        print("File has been picked");
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+  montSerratFont(Color color) {
+    return TextStyle(color: color, fontFamily: "Montserrat", fontSize: 20);
+  }
+
 }
