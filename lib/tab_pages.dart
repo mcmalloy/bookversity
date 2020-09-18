@@ -1,4 +1,5 @@
 import 'package:bookversity/Constants/custom_colors.dart';
+import 'package:bookversity/TabPages/profile_dashboard.dart';
 import 'package:bookversity/TabPages/profile_page.dart';
 import 'TabPages/chat_list_page.dart';
 import 'TabPages/item_list_page.dart';
@@ -27,7 +28,8 @@ class _TabPagesState extends State<TabPages> {
         bottomNavigationBar: menu(),
         body: TabBarView(
           children: [
-            ProfilePage(),
+            //ProfilePage(),
+            ProfileDashBoard(),
             ItemList(),
             ChatList()
           ],

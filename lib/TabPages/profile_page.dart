@@ -49,59 +49,53 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(""),
-        leading: new Icon(
-          Icons.arrow_back,
-          size: 30,
-          color: CustomColors.materialLightGreen,
-        ),
-      ),
-      backgroundColor: Colors.white,
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            child: determineTopLayout(),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height / 4,
-            child: bookDashBoard(),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height / 2,
-            child: RaisedButton(
-              shape: _shapes.customBoxShape1(),
-              color: CustomColors.materialLightGreen,
-              child: Text(
-                "Opret annonce",
-                style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: "Montserrat",
-                    color: Colors.white),
-              ),
-              onPressed: () {
-                setState(() {
-                  _showAdBox = true;
-                });
-              },
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              child: determineTopLayout(),
             ),
-          ),
-          _showAdBox
-              ? Container(color: Colors.grey.withOpacity(0.7))
-              : Container(
-                  height: 0,
+            Positioned(
+              top: MediaQuery.of(context).size.height / 4,
+              child: bookDashBoard(),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).size.height / 2,
+              child: RaisedButton(
+                shape: _shapes.customBoxShape1(),
+                color: CustomColors.materialLightGreen,
+                child: Text(
+                  "Opret annonce",
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: "Montserrat",
+                      color: Colors.white),
                 ),
-          Container(
-            child: createAdBox(),
-          ),
-          Positioned(
-            bottom: MediaQuery.of(context).size.height / 10,
-            child: bottomSection(),
-          )
-        ],
-      ),
+                onPressed: () {
+                  setState(() {
+                    _showAdBox = true;
+                  });
+                },
+              ),
+            ),
+            _showAdBox
+                ? Container(color: Colors.grey.withOpacity(0.7))
+                : Container(
+              height: 0,
+            ),
+            Container(
+              child: createAdBox(),
+            ),
+            Positioned(
+              bottom: MediaQuery.of(context).size.height / 10,
+              child: bottomSection(),
+            )
+          ],
+        ),
+      )
     );
   }
 
