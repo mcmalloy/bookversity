@@ -34,6 +34,7 @@ dependencies:
   flare_splash_screen: ^3.0.1
   firebase_auth_platform_interface: ^2.0.1
   firebase_auth: ^0.18.0+1
+  firebase_database: ^4.0.0
   cloud_firestore: ^0.14.0+2
   firebase_storage: ^4.0.0
   firebase_core: ^0.5.0

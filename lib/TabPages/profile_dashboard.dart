@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/loginType.dart';
+import 'package:bookversity/Models/book.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Services/state_storage.dart';
 import 'package:bookversity/Widgets/shapes.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -16,6 +18,7 @@ class ProfileDashBoard extends StatefulWidget {
 
 class _ProfileDashBoardState extends State<ProfileDashBoard> {
   bool _showAdBox = false;
+  bool _showUploadIndicator = false;
 
   AuthService _authService = AuthService();
   FireStoreService _fireStoreService = FireStoreService();
@@ -48,7 +51,6 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
     });
   }
 
-
   TextEditingController determineController(String type) {
     if (type == "book") {
       return _bookNameController;
@@ -58,12 +60,13 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
       return _priceController;
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomColors.materialLightGreen,
-      body: SafeArea(
-        child: Stack(
+        backgroundColor: CustomColors.materialLightGreen,
+        body: SafeArea(
+            child: Stack(
           children: [
             Column(
               children: [
@@ -75,7 +78,8 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                   height: 80,
                   width: 80,
                   fit: BoxFit.fill,
-                  image: new AssetImage('assets/bookversity_facebook_profile.png'),
+                  image:
+                      new AssetImage('assets/bookversity_facebook_profile.png'),
                 ),
                 SizedBox(
                   height: 30,
@@ -96,15 +100,13 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
             _showAdBox
                 ? Container(color: Colors.grey.withOpacity(0.7))
                 : Container(
-              height: 0,
-            ),
+                    height: 0,
+                  ),
             Container(
               child: createAdBox(),
             )
           ],
-        )
-      )
-    );
+        )));
   }
 
   Widget topDashBoardWidgets() {
@@ -114,7 +116,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
         dashBoardBox(
             180,
             140,
-            customBoxShape(Colors.green, Colors.lightGreenAccent),
+            customBoxShape(Colors.greenAccent[400], Colors.green[300]),
             "Mine\noplysninger",
             20,
             Icons.person_outline),
@@ -122,16 +124,20 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
           width: 25,
         ),
         InkWell(
-          child: dashBoardBox(200, 200, customBoxShape(Colors.red, Colors.orange),
-              "Ny annonce", 21, Icons.attach_money),
-          onTap: (){
+          child: dashBoardBox(
+              200,
+              200,
+              customBoxShape(Colors.red[300], Colors.orange),
+              "Ny annonce",
+              21,
+              Icons.attach_money),
+          onTap: () {
             setState(() {
               _showAdBox = true;
             });
             createAdBox();
           },
         ),
-
       ],
     );
   }
@@ -141,13 +147,15 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
     return Column(
       children: [
         dashBoardBox(
-        140,
-        360,
-        customBoxShape(Colors.purple, Colors.purpleAccent),
-        "Mine annoncer",
-        22,
-        Icons.book),
-        SizedBox(height: 30,),
+            140,
+            360,
+            customBoxShape(Colors.purple[200], Colors.purpleAccent[700]),
+            "Mine annoncer",
+            22,
+            Icons.book),
+        SizedBox(
+          height: 30,
+        ),
         logoutButton()
       ],
     );
@@ -176,7 +184,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
       child: Column(
         children: [
           SizedBox(
-            height: 20,
+            height: 10,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -206,28 +214,28 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
     );
   }
 
-  Widget logoutButton(){
+  Widget logoutButton() {
     return RaisedButton(
-      shape: _shapes.customButtonShape(),
-      color: CustomColors.materialYellow,
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      onPressed: () async {
-        bool loggedOutSuccessfully =
-        await _authService.fireBaseLogOut();
-        if (loggedOutSuccessfully) {
-          // TODO: LOG USER IN
-          Navigator.pop(context);
-        } else {
-          // TODO: Display facebook login error
-        }
-      },
-      child: Text(
-        "Logout",
-        style: TextStyle(
-            fontSize: 18,
-            fontFamily: "Montserrat",
-            color: CustomColors.materialDarkGreen),));
+        shape: _shapes.customButtonShape(),
+        color: CustomColors.materialYellow,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        onPressed: () async {
+          bool loggedOutSuccessfully = await _authService.fireBaseLogOut();
+          if (loggedOutSuccessfully) {
+            // TODO: LOG USER IN
+            Navigator.pop(context);
+          } else {
+            // TODO: Display facebook login error
+          }
+        },
+        child: Text(
+          "Logout",
+          style: TextStyle(
+              fontSize: 18,
+              fontFamily: "Montserrat",
+              color: CustomColors.materialDarkGreen),
+        ));
   }
 
   Widget createAdBox() {
@@ -270,6 +278,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
       ),
     );
   }
+
   Widget bookForm() {
     return Column(
       children: [
@@ -299,7 +308,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                       color: CustomColors.materialDarkGreen)),
               Padding(
                   padding:
-                  EdgeInsets.only(top: 5, bottom: 20, left: 25, right: 25),
+                      EdgeInsets.only(top: 5, bottom: 20, left: 25, right: 25),
                   child: InkWell(
                     onTap: () {
                       print("Image is != null statement: ${_image != null}");
@@ -314,30 +323,56 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                             color: Colors.grey.withOpacity(0.5)),
                         child: _image == null
                             ? Column(
-                          children: [
-                            Icon(Icons.cloud_upload),
-                            Text(
-                              "Tryk for at åbne billeder fra galleri",
-                              style: TextStyle(
-                                  fontFamily: "Montserrat",
-                                  fontSize: 16.0,
-                                  color: CustomColors.materialDarkGreen),
-                              textAlign: TextAlign.center,
-                            )
-                          ],
-                        )
+                                children: [
+                                  Icon(Icons.cloud_upload),
+                                  Text(
+                                    "Tryk for at åbne billeder fra galleri",
+                                    style: TextStyle(
+                                        fontFamily: "Montserrat",
+                                        fontSize: 16.0,
+                                        color: CustomColors.materialDarkGreen),
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                              )
                             : showImage()),
                   )),
               RaisedButton(
                 onPressed: () async {
-                  _fireStoreService.uploadBook(_bookNameController.text,
-                      _isbnController.text, _priceController.text, _pickedImage);
+                  // Create book object
+                  Book book = new Book(
+                      _bookNameController.text,
+                      _isbnController.text,
+                      _priceController.text,
+                      _authService.user,
+                      _pickedImage);
+                  //TODO: Set loading animation
+                  setState(() {
+                    _showUploadIndicator = true;
+                  });
+                  bool uploadResult = await _fireStoreService.uploadBook(book);
+                  if (uploadResult) {
+                    //TODO: Finish loading animation and pop container
+                    setState(() {
+                      _showAdBox = !_showAdBox;
+                      _showUploadIndicator = !_showUploadIndicator;
+                    });
+                    final snackBar = SnackBar(
+                      backgroundColor: CustomColors.materialYellow,
+                      content: Text('Din bog er nu sat til salg!',style: montSerratFont(CustomColors.materialDarkGreen),),
+                    );
+                    Scaffold.of(context).showSnackBar(snackBar);
+                  } else {
+                    //TODO: Display alertdialog with error
+                  }
                 },
                 color: CustomColors.materialYellow,
-                child: Text(
-                  "Opret Annonce",
-                  style: montSerratFont(CustomColors.materialDarkGreen),
-                ),
+                child: _showUploadIndicator
+                    ? CircularProgressIndicator()
+                    : Text(
+                        "Opret Annonce",
+                        style: montSerratFont(CustomColors.materialDarkGreen),
+                      ),
               )
             ],
           ),
@@ -345,6 +380,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
       ],
     );
   }
+
   Widget formObject(String type, IconData formIcon, String hintText) {
     return Container(
         padding: EdgeInsets.only(left: 5),
@@ -401,8 +437,41 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
       print(e);
     }
   }
+
   montSerratFont(Color color) {
     return TextStyle(color: color, fontFamily: "Montserrat", fontSize: 20);
   }
 
+  Widget getBookList(){
+    List<Book> lists = List<Book>();
+    final dbRef = FirebaseDatabase.instance.reference().child("booksForSale");
+
+    return FutureBuilder(
+        future: dbRef.once(),
+        builder: (context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            lists.clear();
+            Map<dynamic, dynamic> values = snapshot.data.value;
+            values.forEach((key, values) {
+              lists.add(values);
+            });
+            return new ListView.builder(
+                shrinkWrap: true,
+                itemCount: lists.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text("Book Title: " + lists[index].booktitle),
+                        Text("ISBN Code: "+ lists[index].isbnCode),
+                        Text("Price: " +lists[index].price),
+                      ],
+                    ),
+                  );
+                });
+          }
+          return CircularProgressIndicator();
+        });
+  }
 }

@@ -17,6 +17,7 @@ class AuthService {
   static String facebookUID;
   // Credential variables
   User user;
+  User _currentlyLoggedIn;
   UserCredential userCredential;
   String accessToken;
   String idToken;
@@ -24,6 +25,11 @@ class AuthService {
   // Social Media Sign in
   final FacebookLogin facebookSignIn = FacebookLogin();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  User getCurrentUser(){
+    print("Getting info from current user: ${_auth.currentUser}");
+    return _auth.currentUser;
+  }
 
   // Sign in anonymously
   Future<User> anonSignIn() async {
@@ -72,6 +78,7 @@ class AuthService {
       idToken: authentication.idToken);
 
     userCredential = await _auth.signInWithCredential(credential);
+    _currentlyLoggedIn = userCredential.user;
     return userCredential.user;
 
     /*
@@ -105,6 +112,7 @@ class AuthService {
         // Authenticate the facebook user with firebase and officially log in as a firebase User
         AuthCredential credential= FacebookAuthProvider.credential(accessToken.token);
         userCredential = await _auth.signInWithCredential(credential);
+        _currentlyLoggedIn = userCredential.user;
         return userCredential.user;
       }
       else if(result.status == FacebookLoginStatus.cancelledByUser){

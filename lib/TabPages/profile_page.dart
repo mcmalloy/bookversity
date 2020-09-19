@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bookversity/Constants/loginType.dart';
+import 'package:bookversity/Models/book.dart';
 import 'package:bookversity/Pages/create_ad_page.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firestore_service.dart';
@@ -338,8 +339,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   )),
               RaisedButton(
                 onPressed: () async {
-                  _fireStoreService.uploadBook(_bookNameController.text,
-                      _isbnController.text, _priceController.text, _pickedImage);
+                  Book book = new Book(
+                      _bookNameController.text,
+                      _isbnController.text,
+                      _priceController.text,
+                      _authService.user,
+                      _pickedImage);
+                  _fireStoreService.uploadBook(book);
                 },
                 color: CustomColors.materialYellow,
                 child: Text(
