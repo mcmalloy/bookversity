@@ -66,10 +66,10 @@ class _ItemListState extends State<ItemList> {
           itemBuilder: (context, index) {
             if (index % 2 == 0) {
               return bookAdCard(
-                  booksForSale[index], _shapes.customListShape(), "right");
+                  booksForSale[index], _shapes.customListShapeRight(), "right");
             } else {
               return bookAdCard(
-                  booksForSale[index], _shapes.customListShape(), "left");
+                  booksForSale[index], _shapes.customListShapeLeft(), "left");
             }
           }),
     );
@@ -94,7 +94,7 @@ class _ItemListState extends State<ItemList> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        CustomTextStyle(book.booktitle, 20, CustomColors.materialYellow),
+        bookInfoText(book),
         CircleAvatar(
           radius: 40,
           backgroundColor: Colors.black,
@@ -113,7 +113,17 @@ class _ItemListState extends State<ItemList> {
           backgroundColor: Colors.black,
           child: Image.network('https://imgcdn.saxo.com/_9780307278821'),
         ),
-        CustomTextStyle(book.booktitle, 20, CustomColors.materialYellow),
+       bookInfoText(book)
+      ],
+    );
+  }
+
+  Widget bookInfoText(Book book){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        CustomTextStyle(book.booktitle, 18, CustomColors.materialYellow),
+        CustomTextStyle("Pris: ${book.price}kr", 16, CustomColors.materialYellow),
       ],
     );
   }

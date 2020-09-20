@@ -28,12 +28,16 @@ class CustomShapes {
             bottomLeft: Radius.circular(40)));
   }
 
-  RoundedRectangleBorder customListShape(){
+  RoundedRectangleBorder customListShapeRight(){
     return RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(40),
-            topRight: Radius.circular(40),
-            bottomRight: Radius.circular(40),
-            bottomLeft: Radius.circular(40)));
+            topLeft: Radius.circular(20),
+            bottomLeft: Radius.circular(20)));
+  }
+  RoundedRectangleBorder customListShapeLeft(){
+    return RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topRight: Radius.circular(20),
+            bottomRight: Radius.circular(20)));
   }
 }
