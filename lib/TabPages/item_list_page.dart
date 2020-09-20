@@ -1,6 +1,7 @@
-
 import 'package:bookversity/Constants/custom_colors.dart';
+import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Models/book.dart';
+import 'package:bookversity/Services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,23 @@ class ItemList extends StatefulWidget {
 }
 
 class _ItemListState extends State<ItemList> {
+  FireStoreService _fireStoreService = FireStoreService();
+  List<Book> booksForSale = new List();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getBooks();
+  }
+
+  Future<void> getBooks() async {
+    List<Book> books = await _fireStoreService.getAllBooks();
+    setState(() {
+      booksForSale = books;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     //getBooks();
@@ -19,67 +37,39 @@ class _ItemListState extends State<ItemList> {
       body: SafeArea(
         child: Column(
           children: [
-            f()
+            Container(
+                padding: EdgeInsets.only(top: 15),
+                alignment: Alignment.center,
+                child: CustomTextStyle(
+                    "Alle Annoncer", 26, CustomColors.materialYellow)),
+            booksForSale.isEmpty
+                ? Container(
+                    // Show a logo saying it couldn't find books'
+              height: 0,
+                    )
+                : booksListView()
           ],
         ),
       ),
     );
   }
 
-  Widget getBookList(){
-    return FutureBuilder(
-      builder: (context, projectSnap) {
-        if (projectSnap.connectionState == ConnectionState.none &&
-            projectSnap.hasData == null) {
-          //print('project snapshot data is: ${projectSnap.data}');
-          return Container();
-        }
-        return ListView.builder(
-          itemCount: projectSnap.data.length,
-          itemBuilder: (context, index) {
-            List<Book> bookList = projectSnap.data[index];
-            return Column(
-              children: <Widget>[
-              ],
-            );
-          },
-        );
-      },
-      future: getBooks(),
-    );
-  }
-  Future<void> getBooks() async {
-    Query query = FirebaseFirestore.instance.collectionGroup("booksForSale");
-    WriteBatch batch = FirebaseFirestore.instance.batch();
-    await query.get().then((querySnapshot) async{
-      print(querySnapshot.toString());
-    });
+  Widget booksListView() {
+    return Expanded(
 
-    return null;
-  }
-
-  Widget f(){
-    // XVFovlmshXhsxUpo06yGs2MkHJV2
-
-   CollectionReference books = FirebaseFirestore.instance.collection(" ");
-    return FutureBuilder<DocumentSnapshot>(
-      future: books.doc().get(),
-      builder:
-          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-
-        if (snapshot.hasError) {
-          return Text("Something went wrong");
-        }
-
-        if (snapshot.connectionState == ConnectionState.done) {
-          Map<String, dynamic> data = snapshot.data.data();
-          print("Loaded data: ${data.toString()}");
-          return Text("Full Name: ");
-        }
-
-        return Text("loading");
-      },
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: booksForSale.length,
+          padding: const EdgeInsets.all(0),
+          physics: const BouncingScrollPhysics(),
+          itemBuilder: (context,index){
+            return bookAdCard(booksForSale[index]);
+          }
+      ),
     );
   }
 
+  Widget bookAdCard(Book book){
+    return CustomTextStyle(book.booktitle,29, CustomColors.materialYellow);
+  }
 }

@@ -10,21 +10,24 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-class FireStoreService{
+class FireStoreService {
   AuthService _authService = AuthService();
-
+  static List<Book> booksForSale = new List();
+  
+  
 
   Future<bool> uploadBook(Book book) async {
     User user = _authService.getCurrentUser();
-    print("uid: "+user.uid);
-    if(await upload(book,user.uid) && await uploadBookToStorage(book,user.uid)){
+    print("uid: " + user.uid);
+    if (await upload(book, user.uid) &&
+        await uploadBookToStorage(book, user.uid)) {
       print("Total upload succeess");
       return true;
     }
     return false;
   }
 
-  Future<bool> uploadBookToCollection(Book book,String id) async{
+  Future<bool> uploadBookToCollection(Book book, String id) async {
     final dbRef = FirebaseDatabase.instance.reference().child("booksForSale");
 
     dbRef.push().set({
@@ -40,14 +43,15 @@ class FireStoreService{
     return true;
   }
 
-  Future<bool> upload(Book book,String id) async {
-    CollectionReference books = FirebaseFirestore.instance.collection("booksForSale");
+  Future<bool> upload(Book book, String id) async {
+    CollectionReference books = FirebaseFirestore.instance.collection(
+        "booksForSale");
     books.add({
       'bookOwnerUID': id,
       'bookTitle': book.booktitle,
       'isbnCode': book.isbnCode,
       'price': book.price
-    }).then((value){
+    }).then((value) {
       print("Book added");
       return true;
     }).catchError((onError) {
@@ -58,24 +62,32 @@ class FireStoreService{
   }
 
   Future<bool> uploadBookToStorage(Book book, String id) async {
-    try{
-      StorageReference reference = FirebaseStorage.instance.ref().child(book.booktitle+"_"+id);
+    try {
+      StorageReference reference = FirebaseStorage.instance.ref().child(
+          book.booktitle + "_" + id);
       StorageUploadTask uploadTask = reference.putFile(book.bookImage);
       await uploadTask.onComplete;
       print("The image reference is stored at: ${reference.path}");
       print("Book has been uploaded to storage successfully");
       getBooksFromUser();
       return true;
-    } catch (e){
+    } catch (e) {
       print(e);
       return false;
     }
   }
 
-  bool hasBooksForSale(){
+  List<Book> hasBooksForSale() {
     User user = _authService.getCurrentUser();
-
-    return false;
+    List<Book> postedBooks = new List();
+    String uid = user.uid;
+      for(int i = 0; i<booksForSale.length; i++){
+        if(booksForSale[i].userID == uid){
+          postedBooks.add(booksForSale[i]);
+          print("Found a matching book: "+booksForSale[i].price);
+        }
+      }
+    return postedBooks == null ? null : postedBooks;
   }
 
   Future<void> getBooksFromUser() async {
@@ -85,4 +97,53 @@ class FireStoreService{
     dbRef.collectionGroup("booksForSale");
     print("printing reference: ${dbRef.toString()}");
   }
+
+
+  Future<List<Book>> getAllBooks() async {
+    List<Book> bookList = new List();
+    FirebaseFirestore rootRef = FirebaseFirestore.instance;
+    CollectionReference booksReference = rootRef.collection("booksForSale");
+
+    final QuerySnapshot result = await booksReference.get();
+    final List<DocumentSnapshot> documents = result.docs;
+    for(int i = 0; i<documents.length; i++){
+      print("booksForSale name: ${documents[i].get("bookTitle")}");
+      bookList.add(new Book(
+          documents[i].get("bookTitle"),
+          documents[i].get("isbnCode"),
+          documents[i].get("price"),
+          documents[i].get("bookOwnerUID"),
+          null // Get the picture of the book from storage
+      ));
+    }
+    booksForSale = bookList;
+    return bookList;
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

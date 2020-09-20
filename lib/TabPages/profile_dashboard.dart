@@ -23,9 +23,9 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
   AuthService _authService = AuthService();
   FireStoreService _fireStoreService = FireStoreService();
   final StateStorageService _storageService = StateStorageService();
-  String profilePictureLink;
   CustomShapes _shapes = CustomShapes();
   LoginType _type;
+  List<Book> _userBooksForSale = new List();
   final TextEditingController _bookNameController = TextEditingController();
   final TextEditingController _isbnController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
@@ -33,21 +33,18 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
   initState() {
     // TODO: implement initState
     super.initState();
+    getBooks();
     getSignInType();
-    getProfileID();
+  }
+
+  Future<void> getBooks() async {
+    await _fireStoreService.getAllBooks();
+    _userBooksForSale = _fireStoreService.hasBooksForSale();
   }
 
   void getSignInType() {
     setState(() {
       _type = _authService.getSignInType();
-    });
-  }
-
-  Future<void> getProfileID() async {
-    String _profilePictureLink = await _storageService.getFacebookUID();
-    setState(() {
-      profilePictureLink = _profilePictureLink;
-      print("profile link acquired!");
     });
   }
 
@@ -344,7 +341,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                       _bookNameController.text,
                       _isbnController.text,
                       _priceController.text,
-                      _authService.user,
+                      _authService.getCurrentUser().uid,
                       _pickedImage);
                   //TODO: Set loading animation
                   setState(() {
