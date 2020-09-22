@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:bookversity/Constants/button_switch_color_animation.dart';
-import 'package:bookversity/Constants/loginType.dart';
+import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/state_storage.dart';
 import 'package:bookversity/Widgets/dialogs.dart';

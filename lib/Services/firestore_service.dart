@@ -98,7 +98,17 @@ class FireStoreService {
     print("printing reference: ${dbRef.toString()}");
   }
 
-
+  Future<List<Book>> getMyBooks() async{
+    List<Book> myBooks = new List();
+    List<Book> allBooks = await getAllBooks();
+    String uid = _authService.getCurrentUser().uid;
+    for(int i = 0; i<allBooks.length; i++){
+      if(uid ==  allBooks[i].userID){
+        myBooks.add(allBooks[i]);
+      }
+    }
+    return myBooks;
+  }
   Future<List<Book>> getAllBooks() async {
     List<Book> bookList = new List();
     FirebaseFirestore rootRef = FirebaseFirestore.instance;

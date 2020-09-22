@@ -1,5 +1,4 @@
 import 'package:bookversity/Constants/custom_colors.dart';
-import 'package:bookversity/Pages/camera_page.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:flutter/material.dart';
 

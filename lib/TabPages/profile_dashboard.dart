@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:bookversity/Constants/custom_colors.dart';
-import 'package:bookversity/Constants/loginType.dart';
+import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Models/book.dart';
+import 'package:bookversity/Pages/my_book_listings_page.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Services/state_storage.dart';
+import 'package:bookversity/TabPages/item_list_page.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +102,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                     height: 0,
                   ),
             Container(
-              child: createAdBox(),
+              child: createListingBox(),
             )
           ],
         )));
@@ -132,7 +134,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
             setState(() {
               _showAdBox = true;
             });
-            createAdBox();
+            createListingBox();
           },
         ),
       ],
@@ -140,20 +142,28 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
   }
 
   Widget centerDashBoardWidget() {
-    // h140, w360, customBoxShape(Colors.purple, Colors.purpleaccent)
     return Column(
       children: [
-        dashBoardBox(
-            140,
-            360,
-            customBoxShape(Colors.purple[200], Colors.purpleAccent[700]),
-            "Mine annoncer",
-            22,
-            Icons.book),
+        InkWell(
+          onTap: (){
+            print("Navigating to item list page");
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MyBooksListView()));
+          },
+          child: dashBoardBox(
+              140,
+              360,
+              customBoxShape(Colors.purple[200], Colors.purpleAccent[700]),
+              "Mine annoncer",
+              22,
+              Icons.book),
+        ),
         SizedBox(
           height: 30,
         ),
-        logoutButton()
+        Padding(
+          padding: EdgeInsets.only(top: 50),
+          child: logoutButton(),
+        )
       ],
     );
   }
@@ -235,7 +245,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
         ));
   }
 
-  Widget createAdBox() {
+  Widget createListingBox() {
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 600),
       top: _showAdBox ? 30 : -MediaQuery.of(context).size.height,
@@ -268,7 +278,6 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                 ],
               ),
               bookForm(),
-              //TODO: Form goes in here
             ],
           ),
         ),

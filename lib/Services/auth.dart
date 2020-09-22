@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:bookversity/Constants/loginType.dart';
+import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Services/state_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

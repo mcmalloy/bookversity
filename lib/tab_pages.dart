@@ -1,4 +1,5 @@
 import 'package:bookversity/Constants/custom_colors.dart';
+import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/TabPages/profile_dashboard.dart';
 import 'TabPages/chat_list_page.dart';
 import 'TabPages/item_list_page.dart';
@@ -29,7 +30,7 @@ class _TabPagesState extends State<TabPages> {
           children: [
             //ProfilePage(),
             ProfileDashBoard(),
-            ItemList(),
+            ItemList(ListingType.allBooksForSale),
             ChatList()
           ],
         ),

@@ -1,21 +1,29 @@
+import 'package:bookversity/Constants/cards.dart';
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
+import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Models/book.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ItemList extends StatefulWidget {
+  ListingType _listPageType;
+  ItemList(this._listPageType);
   @override
-  _ItemListState createState() => _ItemListState();
+  _ItemListState createState() => _ItemListState(_listPageType);
 }
 
 class _ItemListState extends State<ItemList> {
+  ListingType _listPageType;
+  _ItemListState(this._listPageType);
   FireStoreService _fireStoreService = FireStoreService();
   CustomShapes _shapes = CustomShapes();
   List<Book> booksForSale = new List();
+  String _pageTitle;
 
   @override
   void initState() {
@@ -25,10 +33,19 @@ class _ItemListState extends State<ItemList> {
   }
 
   Future<void> getBooks() async {
-    List<Book> books = await _fireStoreService.getAllBooks();
-    setState(() {
-      booksForSale = books;
-    });
+    if (_listPageType == ListingType.myBooksForSale) {
+      _pageTitle = "Mine annoncer";
+      List<Book> books = await _fireStoreService.getMyBooks();
+      setState(() {
+        booksForSale = books;
+      });
+    } else if (_listPageType == ListingType.allBooksForSale) {
+      _pageTitle = "Alle annoncer";
+      List<Book> books = await _fireStoreService.getAllBooks();
+      setState(() {
+        booksForSale = books;
+      });
+    }
   }
 
   @override
@@ -39,11 +56,19 @@ class _ItemListState extends State<ItemList> {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-                padding: EdgeInsets.only(top: 15),
-                alignment: Alignment.center,
-                child: CustomTextStyle(
-                    "Alle Annoncer", 26, CustomColors.materialYellow)),
+            Expanded(
+              flex: 1,
+                child: Row(
+                  children: [
+                    _listPageType == ListingType.allBooksForSale ? Container(height: 0,width: 0,) :
+                    IconButton(icon: Icon(FontAwesomeIcons.arrowLeft), onPressed: () { Navigator.pop(context); },),
+                    Container(
+                        padding: EdgeInsets.only(top: 15,left: 25),
+                        alignment: Alignment.center,
+                        child: CustomTextStyle(
+                            _pageTitle, 26, CustomColors.materialYellow))
+                  ],
+                )),
             booksForSale.isEmpty
                 ? Container(
                     // Show a logo saying it couldn't find books'
@@ -58,6 +83,7 @@ class _ItemListState extends State<ItemList> {
 
   Widget booksListView() {
     return Expanded(
+      flex: 10,
       child: ListView.builder(
           shrinkWrap: true,
           itemCount: booksForSale.length,
@@ -65,66 +91,14 @@ class _ItemListState extends State<ItemList> {
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             if (index % 2 == 0) {
-              return bookAdCard(
-                  booksForSale[index], _shapes.customListShapeRight(), "right");
+              return BookCard(
+                  booksForSale[index], _shapes.customListShapeRight(), "right",ListingType.allBooksForSale);
             } else {
-              return bookAdCard(
-                  booksForSale[index], _shapes.customListShapeLeft(), "left");
+              // Switch to left or create symmetry later on
+              return BookCard(
+                  booksForSale[index], _shapes.customListShapeLeft(), "right",ListingType.allBooksForSale);
             }
           }),
-    );
-  }
-
-  Widget bookAdCard(Book book, RoundedRectangleBorder shape, String symmetry) {
-    return InkWell(
-      onTap: (){
-        //TODO: GO TO BOOK DETAILS PAGE
-      },
-      child: Container(
-          height: 120,
-          child: Card(
-              margin: EdgeInsets.all(15),
-              shape: shape,
-              color: Colors.purple,
-              child: symmetry == "right" ? rightRow(book) : leftRow(book))),
-    );
-  }
-
-  Widget rightRow(Book book) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        bookInfoText(book),
-        CircleAvatar(
-          radius: 40,
-          backgroundColor: Colors.black,
-          child: Image.network('https://imgcdn.saxo.com/_9780307278821'),
-        )
-      ],
-    );
-  }
-
-  Widget leftRow(Book book) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        CircleAvatar(
-          radius: 40,
-          backgroundColor: Colors.black,
-          child: Image.network('https://imgcdn.saxo.com/_9780307278821'),
-        ),
-       bookInfoText(book)
-      ],
-    );
-  }
-
-  Widget bookInfoText(Book book){
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        CustomTextStyle(book.booktitle, 18, CustomColors.materialYellow),
-        CustomTextStyle("Pris: ${book.price}kr", 16, CustomColors.materialYellow),
-      ],
     );
   }
 }
