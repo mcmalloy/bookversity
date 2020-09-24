@@ -1,4 +1,4 @@
-import 'package:bookversity/Constants/cards.dart';
+import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Cards/bookCard.dart';
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Constants/enums.dart';
@@ -92,11 +92,11 @@ class _ItemListState extends State<ItemList> {
           itemBuilder: (context, index) {
             if (index % 2 == 0) {
               return BookCard(
-                  booksForSale[index], _shapes.customListShapeRight(), "right",ListingType.allBooksForSale);
+                  booksForSale[index], _shapes.customListShapeRight(), "right");
             } else {
               // Switch to left or create symmetry later on
               return BookCard(
-                  booksForSale[index], _shapes.customListShapeLeft(), "right",ListingType.allBooksForSale);
+                  booksForSale[index], _shapes.customListShapeLeft(), "right");
             }
           }),
     );

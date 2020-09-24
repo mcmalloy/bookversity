@@ -1,48 +1,36 @@
 import 'package:bookversity/Constants/custom_colors.dart';
+import 'package:bookversity/Constants/custom_textstyle.dart';
+import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Models/book.dart';
 import 'package:flutter/material.dart';
-
-import 'custom_textstyle.dart';
-import 'enums.dart';
 
 class BookCard extends StatefulWidget {
   RoundedRectangleBorder shape;
   String symmetry;
   Book book;
-  ListingType listingType;
 
-  BookCard(this.book, this.shape, this.symmetry,this.listingType);
+  BookCard(this.book, this.shape, this.symmetry);
 
   @override
-  _BookCardState createState() => _BookCardState(book, shape, symmetry,listingType);
+  _BookCardState createState() => _BookCardState(book, shape, symmetry);
 }
 
 class _BookCardState extends State<BookCard> {
   RoundedRectangleBorder shape;
   String symmetry;
   Book book;
-  ListingType _listingType;
 
   _BookCardState(
     this.book,
     this.shape,
     this.symmetry,
-      this._listingType
   );
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         //TODO: GO TO BOOK DETAILS PAGE
-        if(_listingType == ListingType.myBooksForSale){
-          print("Showing Edit Book dialog");
-        } else if(_listingType == ListingType.deleteBooksForSale){
-          deleteDialog(book, context);
-          print("Showing Delete dialog");
-        }
-        else if(_listingType == ListingType.allBooksForSale){
-          print("Showing details dialog");
-        }
+
       },
       child: Container(
           height: 120,

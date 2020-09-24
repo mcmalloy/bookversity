@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:bookversity/Constants/cards.dart';
+import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Cards/bookCard.dart';
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Constants/enums.dart';
+import 'package:bookversity/Models/Cards/deleteBookCard.dart';
 import 'package:bookversity/Models/book.dart';
 import 'package:bookversity/Pages/customWidgets.dart';
 import 'package:bookversity/Services/auth.dart';
@@ -115,6 +116,7 @@ class _MyBooksListViewState extends State<MyBooksListView> {
                 onPressed: () {
                   setState(() {
                     isDeleting = !isDeleting;
+                    _loadedContent();
                   });
                 },
               )
@@ -129,7 +131,13 @@ class _MyBooksListViewState extends State<MyBooksListView> {
     if (booksForSale.isEmpty) {
       return createBookListingWidget();
     }
-    return booksListView();
+    if(isDeleting){
+      listingType = ListingType.deleteBooksForSale;
+      return booksListView();
+    } else if(!isDeleting){
+      listingType = ListingType.myBooksForSale;
+      return booksListView();
+    }
   }
 
   Widget booksListView() {
@@ -141,15 +149,25 @@ class _MyBooksListViewState extends State<MyBooksListView> {
           padding: const EdgeInsets.all(0),
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
-            return BookCard(
-                booksForSale[index],
-                _shapes.customListShapeLeft(),
-                "left",
-                isDeleting
-                    ? ListingType.deleteBooksForSale
-                    : ListingType.myBooksForSale);
+            return determineCardType(index);
           }),
     );
+  }
+
+  Widget determineCardType(int index) {
+    if(listingType == ListingType.myBooksForSale){
+      return BookCard(
+          booksForSale[index],
+          _shapes.customListShapeLeft(),
+          "left");
+    }
+    else if(listingType == ListingType.deleteBooksForSale){
+      return DeleteBookCard(
+        booksForSale[index],
+        _shapes.customListShapeLeft(),
+      );
+    }
+    return null;
   }
 
   Widget deleteBookItemButton() {
@@ -164,6 +182,14 @@ class _MyBooksListViewState extends State<MyBooksListView> {
             CustomTextStyle("Slet Opslag", 18, CustomColors.materialDarkGreen),
       ),
     );
+  }
+
+  Widget setListToDelete() {
+
+  }
+
+  Widget setListToUpdate() {
+
   }
 
   Widget createBookListingWidget() {

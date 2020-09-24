@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path/path.dart';
 class FireStoreService {
   AuthService _authService = AuthService();
   static List<Book> booksForSale = new List();
@@ -128,6 +129,22 @@ class FireStoreService {
     }
     booksForSale = bookList;
     return bookList;
+  }
+
+  Future<bool> deleteBookListing(String bookTitle) async {
+    String uid = _authService.getCurrentUser().uid;
+    FirebaseFirestore rootRef = FirebaseFirestore.instance;
+    CollectionReference booksReference = rootRef.collection("booksForSale");
+    final QuerySnapshot result = await booksReference.get();
+    final List<DocumentSnapshot> documents = result.docs;
+    print("current bookTitle to delete $bookTitle , and current UID: $uid");
+    for(int i = 0; i<documents.length; i++){
+      if(documents[i].get("bookTitle") == bookTitle && documents[i].get("bookOwnerUID") == uid){
+        print("Removing book with title: "+result.docs[i].get("bookTitle"));
+        print("Document reference: "+result.docs[i].reference.toString());
+        await rootRef.doc(result.docs[i].reference.toString()).delete(); // DELETES BOOK
+      }
+    }
   }
 }
 
