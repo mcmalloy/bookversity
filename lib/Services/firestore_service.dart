@@ -20,38 +20,23 @@ class FireStoreService {
   Future<bool> uploadBook(Book book) async {
     User user = _authService.getCurrentUser();
     print("uid: " + user.uid);
-    if (await upload(book, user.uid) &&
-        await uploadBookToStorage(book, user.uid)) {
+    if (await upload(book, user.uid)) {
       print("Total upload succeess");
       return true;
     }
     return false;
   }
 
-  Future<bool> uploadBookToCollection(Book book, String id) async {
-    final dbRef = FirebaseDatabase.instance.reference().child("booksForSale");
-
-    dbRef.push().set({
-      "bookTitle": book.booktitle,
-      "isbnCode": book.isbnCode == null ? "" : book.isbnCode,
-      "price": book.price,
-      "bookOwnerUID": id
-    }).catchError((onError) {
-      print(onError);
-      return false;
-    });
-    print("upload to collection success");
-    return true;
-  }
-
   Future<bool> upload(Book book, String id) async {
     CollectionReference books = FirebaseFirestore.instance.collection(
         "booksForSale");
+    String imageURL = await uploadBookToStorage(book, id);
     books.add({
       'bookOwnerUID': id,
-      'bookTitle': book.booktitle,
+      'bookTitle': book.bookTitle,
       'isbnCode': book.isbnCode,
-      'price': book.price
+      'price': book.price,
+      'imageURL' : imageURL
     }).then((value) {
       print("Book added");
       return true;
@@ -62,33 +47,48 @@ class FireStoreService {
     return true;
   }
 
-  Future<bool> uploadBookToStorage(Book book, String id) async {
+  Future<String> uploadBookToStorage(Book book, String id) async {
     try {
-      StorageReference reference = FirebaseStorage.instance.ref().child(
-          book.booktitle + "_" + id);
+      StorageReference reference = FirebaseStorage.instance.ref().child(id).child(book.bookTitle);
       StorageUploadTask uploadTask = reference.putFile(book.bookImage);
       await uploadTask.onComplete;
       print("The image reference is stored at: ${reference.path}");
       print("Book has been uploaded to storage successfully");
       getBooksFromUser();
-      return true;
+      return reference.path;
     } catch (e) {
       print(e);
-      return false;
+      return "false";
     }
   }
 
-  List<Book> hasBooksForSale() {
+  Future<List<String>> getMyBooksImages(List<Book> myBooksForSale) async{
+    String id = myBooksForSale[0].userID;
+    StorageReference imageLocation;
+    List<String> urls = new List();
+    for(int i = 0; i<myBooksForSale.length; i++){
+      imageLocation = FirebaseStorage.instance.ref().child(id).child(myBooksForSale[i].bookTitle);
+      urls.add(await imageLocation.getDownloadURL());
+    }
+    return urls;
+  }
+
+  Future<List<String>> getBooksFromStorage(List<Book> bookList) async {
+    StorageReference imageLocation;
+    List<String> urls = new List();
+    for(int i = 0; i<bookList.length; i++){
+      imageLocation = FirebaseStorage.instance.ref().child(bookList[i].userID).child(bookList[i].bookTitle);
+      urls.add(await imageLocation.getDownloadURL());
+    }
+    return urls;
+  }
+
+
+  Future<bool> hasBooksForSale() async {
     User user = _authService.getCurrentUser();
-    List<Book> postedBooks = new List();
     String uid = user.uid;
-      for(int i = 0; i<booksForSale.length; i++){
-        if(booksForSale[i].userID == uid){
-          postedBooks.add(booksForSale[i]);
-          print("Found a matching book: "+booksForSale[i].price);
-        }
-      }
-    return postedBooks == null ? null : postedBooks;
+
+    return true;
   }
 
   Future<void> getBooksFromUser() async {
@@ -105,6 +105,7 @@ class FireStoreService {
     String uid = _authService.getCurrentUser().uid;
     for(int i = 0; i<allBooks.length; i++){
       if(uid ==  allBooks[i].userID){
+        print("Found matching book for user");
         myBooks.add(allBooks[i]);
       }
     }
@@ -118,13 +119,13 @@ class FireStoreService {
     final QuerySnapshot result = await booksReference.get();
     final List<DocumentSnapshot> documents = result.docs;
     for(int i = 0; i<documents.length; i++){
-      print("booksForSale name: ${documents[i].get("bookTitle")}");
       bookList.add(new Book(
           documents[i].get("bookTitle"),
           documents[i].get("isbnCode"),
           documents[i].get("price"),
           documents[i].get("bookOwnerUID"),
-          null // Get the picture of the book from storage
+          null, // Get the picture of the book from storage
+          documents[i].get("imageURL")
       ));
     }
     booksForSale = bookList;
@@ -137,14 +138,21 @@ class FireStoreService {
     CollectionReference booksReference = rootRef.collection("booksForSale");
     final QuerySnapshot result = await booksReference.get();
     final List<DocumentSnapshot> documents = result.docs;
-    print("current bookTitle to delete $bookTitle , and current UID: $uid");
     for(int i = 0; i<documents.length; i++){
       if(documents[i].get("bookTitle") == bookTitle && documents[i].get("bookOwnerUID") == uid){
-        print("Removing book with title: "+result.docs[i].get("bookTitle"));
-        print("Document reference: "+result.docs[i].reference.toString());
-        await rootRef.doc(result.docs[i].reference.toString()).delete(); // DELETES BOOK
+        String deletePath = result.docs[i].reference.toString();
+        //await rootRef.doc(deletePath).delete(); // DELETES BOOK
+        await FirebaseFirestore.instance.runTransaction((Transaction myTransaction) async {
+          myTransaction.delete(rootRef.doc(deletePath));
+        });
+        break;
       }
     }
+  }
+  Future<void> deleteBookFromStorage(String bookTitle, String id) async {
+    StorageReference imageLocation;
+    imageLocation = FirebaseStorage.instance.ref().child(id).child(bookTitle);
+    imageLocation.delete();
   }
 }
 

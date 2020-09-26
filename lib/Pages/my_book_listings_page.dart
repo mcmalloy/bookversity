@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Cards/bookCard.dart';
@@ -10,6 +11,8 @@ import 'package:bookversity/Pages/customWidgets.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,7 +27,8 @@ class _MyBooksListViewState extends State<MyBooksListView> {
   AuthService _authService = AuthService();
 
   CustomShapes _shapes = CustomShapes();
-  List<Book> booksForSale;
+  List<Book> booksForSale = new List();
+  List<String> bookImageURLs = new List();
   bool isDeleting = false;
   bool isLoading = false;
   bool showForm = false;
@@ -51,10 +55,26 @@ class _MyBooksListViewState extends State<MyBooksListView> {
   Future<void> getBooks() async {
     showProgressIndicator(true);
     List<Book> books = await _fireStoreService.getMyBooks();
-    setState(() {
-      booksForSale = books;
+    print("Is books empty: " + books.isEmpty.toString());
+    if (books.isNotEmpty) {
+      setState(() {
+        booksForSale = books;
+        getBookImageURLs();
+      });
+    } else {
       showProgressIndicator(false);
-    });
+    }
+  }
+
+  Future<void> getBookImageURLs() async {
+    if (booksForSale.length >= 1) {
+      List<String> urls =
+          await _fireStoreService.getMyBooksImages(booksForSale);
+      setState(() {
+        bookImageURLs = urls;
+        showProgressIndicator(false);
+      });
+    }
   }
 
   @override
@@ -72,8 +92,13 @@ class _MyBooksListViewState extends State<MyBooksListView> {
               ),
               topBar(),
               isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(),
+                  ? Expanded(
+                      flex: 10,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: CustomColors.materialYellow,
+                        ),
+                      ),
                     )
                   : _loadedContent(),
             ],
@@ -131,10 +156,10 @@ class _MyBooksListViewState extends State<MyBooksListView> {
     if (booksForSale.isEmpty) {
       return createBookListingWidget();
     }
-    if(isDeleting){
+    if (isDeleting && bookImageURLs.isNotEmpty) {
       listingType = ListingType.deleteBooksForSale;
       return booksListView();
-    } else if(!isDeleting){
+    } else if (!isDeleting && bookImageURLs.isNotEmpty) {
       listingType = ListingType.myBooksForSale;
       return booksListView();
     }
@@ -155,13 +180,12 @@ class _MyBooksListViewState extends State<MyBooksListView> {
   }
 
   Widget determineCardType(int index) {
-    if(listingType == ListingType.myBooksForSale){
-      return BookCard(
-          booksForSale[index],
-          _shapes.customListShapeLeft(),
-          "left");
-    }
-    else if(listingType == ListingType.deleteBooksForSale){
+    FireStoreService _fireStoreService = FireStoreService();
+    Image image = Image.network(bookImageURLs[index]);
+    if (listingType == ListingType.myBooksForSale) {
+      return BookCard(booksForSale[index], _shapes.customListShapeLeft(),
+          "left", bookImageURLs[index]);
+    } else if (listingType == ListingType.deleteBooksForSale) {
       return DeleteBookCard(
         booksForSale[index],
         _shapes.customListShapeLeft(),
@@ -184,13 +208,9 @@ class _MyBooksListViewState extends State<MyBooksListView> {
     );
   }
 
-  Widget setListToDelete() {
+  Widget setListToDelete() {}
 
-  }
-
-  Widget setListToUpdate() {
-
-  }
+  Widget setListToUpdate() {}
 
   Widget createBookListingWidget() {
     return Column(
@@ -310,7 +330,8 @@ class _MyBooksListViewState extends State<MyBooksListView> {
                       _isbnController.text,
                       _priceController.text,
                       _authService.getCurrentUser().uid,
-                      _pickedImage);
+                      _pickedImage,
+                      null);
                   //TODO: Set loading animation
                   setState(() {
                     _showUploadIndicator = true;

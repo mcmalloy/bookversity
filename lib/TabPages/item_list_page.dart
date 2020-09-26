@@ -23,7 +23,9 @@ class _ItemListState extends State<ItemList> {
   FireStoreService _fireStoreService = FireStoreService();
   CustomShapes _shapes = CustomShapes();
   List<Book> booksForSale = new List();
+  List<String> bookImageURLs = new List();
   String _pageTitle;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -32,18 +34,29 @@ class _ItemListState extends State<ItemList> {
     getBooks();
   }
 
+  showProgressIndicator(bool show) {
+    setState(() {
+      isLoading = show;
+    });
+  }
+
   Future<void> getBooks() async {
-    if (_listPageType == ListingType.myBooksForSale) {
-      _pageTitle = "Mine annoncer";
-      List<Book> books = await _fireStoreService.getMyBooks();
+    showProgressIndicator(true);
+    _pageTitle = "Alle annoncer";
+    List<Book> books = await _fireStoreService.getAllBooks();
+    setState(() {
+      booksForSale = books;
+      getBookURLs();
+    });
+  }
+
+  Future<void> getBookURLs() async {
+    if (booksForSale.length >= 1) {
+      List<String> urls =
+          await _fireStoreService.getBooksFromStorage(booksForSale);
       setState(() {
-        booksForSale = books;
-      });
-    } else if (_listPageType == ListingType.allBooksForSale) {
-      _pageTitle = "Alle annoncer";
-      List<Book> books = await _fireStoreService.getAllBooks();
-      setState(() {
-        booksForSale = books;
+        bookImageURLs = urls;
+        showProgressIndicator(false);
       });
     }
   }
@@ -57,28 +70,43 @@ class _ItemListState extends State<ItemList> {
         child: Column(
           children: [
             Expanded(
-              flex: 1,
+                flex: 1,
                 child: Row(
                   children: [
-                    _listPageType == ListingType.allBooksForSale ? Container(height: 0,width: 0,) :
-                    IconButton(icon: Icon(FontAwesomeIcons.arrowLeft), onPressed: () { Navigator.pop(context); },),
+                    _listPageType == ListingType.allBooksForSale
+                        ? Container(
+                            height: 0,
+                            width: 0,
+                          )
+                        : IconButton(
+                            icon: Icon(FontAwesomeIcons.arrowLeft),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
                     Container(
-                        padding: EdgeInsets.only(top: 15,left: 25),
+                        padding: EdgeInsets.only(top: 15, left: 25),
                         alignment: Alignment.center,
                         child: CustomTextStyle(
                             _pageTitle, 26, CustomColors.materialYellow))
                   ],
                 )),
-            booksForSale.isEmpty
-                ? Container(
-                    // Show a logo saying it couldn't find books'
-                    height: 0,
+            isLoading
+                ? Expanded(
+                    flex: 10,
+                    child: Center(child: CircularProgressIndicator(backgroundColor: CustomColors.materialYellow,),),
                   )
-                : booksListView()
+                : _loadedContent()
           ],
         ),
       ),
     );
+  }
+
+  Widget _loadedContent() {
+    if (bookImageURLs.isNotEmpty) {
+      return booksListView();
+    }
   }
 
   Widget booksListView() {
@@ -91,12 +119,16 @@ class _ItemListState extends State<ItemList> {
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             if (index % 2 == 0) {
+              print("URL: ${bookImageURLs[index]}");
               return BookCard(
-                  booksForSale[index], _shapes.customListShapeRight(), "right");
+                  booksForSale[index],
+                  _shapes.customListShapeRight(),
+                  "right",
+                  bookImageURLs[index]);
             } else {
               // Switch to left or create symmetry later on
-              return BookCard(
-                  booksForSale[index], _shapes.customListShapeLeft(), "right");
+              return BookCard(booksForSale[index],
+                  _shapes.customListShapeLeft(), "right", bookImageURLs[index]);
             }
           }),
     );

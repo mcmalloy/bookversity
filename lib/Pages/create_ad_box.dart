@@ -149,7 +149,8 @@ class _CreateListingBoxState extends State<CreateListingBox> {
                       _isbnController.text,
                       _priceController.text,
                       _authService.getCurrentUser().uid,
-                      _pickedImage);
+                      _pickedImage,
+                      null);
                   //TODO: Set loading animation
                   setState(() {
                     _showUploadIndicator = true;

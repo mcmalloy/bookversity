@@ -74,7 +74,7 @@ class _DeleteBookCardState extends State<DeleteBookCard> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        CustomTextStyle(book.booktitle, 18, CustomColors.materialYellow),
+        CustomTextStyle(book.bookTitle, 18, CustomColors.materialYellow),
       ],
     );
   }
@@ -88,7 +88,7 @@ class _DeleteBookCardState extends State<DeleteBookCard> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(15))),
               content: CustomTextStyle(
-                  "Er du sikker på at du vil fjerne ${book.booktitle}",
+                  "Er du sikker på at du vil fjerne ${book.bookTitle}",
                   18,
                   CustomColors.materialDarkGreen),
           elevation: 3,
@@ -100,7 +100,7 @@ class _DeleteBookCardState extends State<DeleteBookCard> {
                   Colors.red
                 ),
                 onPressed: () async {
-                  fireStoreService.deleteBookListing(book.booktitle);
+                  fireStoreService.deleteBookListing(book.bookTitle);
                   Navigator.of(context).pop();
                 },
               ),

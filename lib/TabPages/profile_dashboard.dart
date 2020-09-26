@@ -27,7 +27,6 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
   final StateStorageService _storageService = StateStorageService();
   CustomShapes _shapes = CustomShapes();
   LoginType _type;
-  List<Book> _userBooksForSale = new List();
   final TextEditingController _bookNameController = TextEditingController();
   final TextEditingController _isbnController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
@@ -35,14 +34,10 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
   initState() {
     // TODO: implement initState
     super.initState();
-    getBooks();
     getSignInType();
   }
 
-  Future<void> getBooks() async {
-    await _fireStoreService.getAllBooks();
-    _userBooksForSale = _fireStoreService.hasBooksForSale();
-  }
+
 
   void getSignInType() {
     setState(() {
@@ -351,7 +346,8 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                       _isbnController.text,
                       _priceController.text,
                       _authService.getCurrentUser().uid,
-                      _pickedImage);
+                      _pickedImage,
+                  null);
                   //TODO: Set loading animation
                   setState(() {
                     _showUploadIndicator = true;
@@ -469,7 +465,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text("Book Title: " + lists[index].booktitle),
+                        Text("Book Title: " + lists[index].bookTitle),
                         Text("ISBN Code: "+ lists[index].isbnCode),
                         Text("Price: " +lists[index].price),
                       ],
