@@ -179,12 +179,14 @@ class _MyBooksListViewState extends State<MyBooksListView> {
     FireStoreService _fireStoreService = FireStoreService();
     Image image = Image.network(bookImageURLs[index]);
     if (listingType == ListingType.myBooksForSale) {
+      print("printing book");
       return BookCard(booksForSale[index], _shapes.customListShapeLeft(),
-          "left", bookImageURLs[index]);
+          "left", bookImageURLs[index],true);
     } else if (listingType == ListingType.deleteBooksForSale) {
       return DeleteBookCard(
         booksForSale[index],
         _shapes.customListShapeLeft(),
+        bookImageURLs[index]
       );
     }
     return null;
@@ -334,15 +336,10 @@ class _MyBooksListViewState extends State<MyBooksListView> {
                   });
                   bool uploadResult = await _fireStoreService.uploadBook(book);
                   if (uploadResult) {
-                    final snackBar = SnackBar(
-                        backgroundColor: CustomColors.materialYellow,
-                        content: CustomTextStyle("Din bog er nu sat til salg!",
-                            18, CustomColors.materialDarkGreen));
-                    Scaffold.of(context).showSnackBar(snackBar);
                     //TODO: Finish loading animation and pop container
                     setState(() {
                       showForm = false;
-                      _showUploadIndicator = !_showUploadIndicator;
+                      _showUploadIndicator = false;
                       getBooks();
                     });
                   } else {
@@ -362,6 +359,13 @@ class _MyBooksListViewState extends State<MyBooksListView> {
     );
   }
 
+  void showUploadedSnackbar(){
+    final snackBar = SnackBar(
+        backgroundColor: CustomColors.materialYellow,
+        content: CustomTextStyle("Din bog er nu sat til salg!",
+            18, CustomColors.materialDarkGreen));
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
   Image showImage() {
     return Image(
       image: _image,

@@ -121,11 +121,13 @@ class _ItemListState extends State<ItemList> {
                   booksForSale[index],
                   _shapes.customListShapeRight(),
                   "right",
-                  bookImageURLs[index]);
+                  bookImageURLs[index],
+                false
+              );
             } else {
               // Switch to left or create symmetry later on
               return BookCard(booksForSale[index],
-                  _shapes.customListShapeLeft(), "right", bookImageURLs[index]);
+                  _shapes.customListShapeLeft(), "right", bookImageURLs[index],false);
             }
           }),
     );

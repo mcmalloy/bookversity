@@ -11,10 +11,12 @@ class BookCard extends StatefulWidget {
   String symmetry;
   Book book;
   String url;
-  BookCard(this.book, this.shape, this.symmetry,this.url);
+  bool myListings;
+
+  BookCard(this.book, this.shape, this.symmetry,this.url,this.myListings);
 
   @override
-  _BookCardState createState() => _BookCardState(book, shape, symmetry,url);
+  _BookCardState createState() => _BookCardState(book, shape, symmetry,url,myListings);
 }
 
 class _BookCardState extends State<BookCard> {
@@ -22,20 +24,24 @@ class _BookCardState extends State<BookCard> {
   String symmetry;
   Book book;
   String url;
+  bool myListings;
 
   _BookCardState(
     this.book,
     this.shape,
     this.symmetry,
-      this.url
+      this.url,
+      this.myListings
   );
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         //TODO: GO TO BOOK DETAILS PAGE
-        print("GOING TO DETAILS");
-        Navigator.push(context, MaterialPageRoute(builder: (context) => BookDetailsPage()));
+        if(!myListings){
+          print("Going to details!");
+          Navigator.push(context, MaterialPageRoute(builder: (context) => BookDetailsPage(book,url)));
+        }
       },
       child: Container(
           height: 120,

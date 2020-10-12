@@ -8,19 +8,22 @@ import 'package:flutter/material.dart';
 class DeleteBookCard extends StatefulWidget {
   RoundedRectangleBorder shape;
   Book book;
-  DeleteBookCard(this.book, this.shape);
+  String url;
+  DeleteBookCard(this.book, this.shape,this.url);
 
   @override
-  _DeleteBookCardState createState() => _DeleteBookCardState(book, shape);
+  _DeleteBookCardState createState() => _DeleteBookCardState(book, shape, url);
 }
 
 class _DeleteBookCardState extends State<DeleteBookCard> {
   RoundedRectangleBorder shape;
   Book book;
+  String url;
   FireStoreService fireStoreService = FireStoreService();
   _DeleteBookCardState(
     this.book,
     this.shape,
+      this.url
   );
 
   @override
@@ -50,7 +53,7 @@ class _DeleteBookCardState extends State<DeleteBookCard> {
             child: CircleAvatar(
               radius: 40,
               backgroundColor: Colors.black,
-              child: Image.network('https://imgcdn.saxo.com/_9780307278821'),
+              child: Image.network(url),
             ),
           ),
         ),
