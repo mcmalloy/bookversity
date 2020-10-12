@@ -45,19 +45,19 @@ class _CreateAddPageState extends State<CreateAddPage> {
             Padding(
               padding:
                   EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-              child: formObject("book", Icons.book, "Bogtitel"),
+              child: formObject(TextInputType.text,"book", Icons.book, "Bogtitel"),
             ),
             Container(height: 1, color: Colors.grey[400]),
             Padding(
               padding:
                   EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-              child: formObject("isbn", Icons.library_books, "ISBN Kode"),
+              child: formObject(TextInputType.number,"isbn", Icons.library_books, "ISBN Kode"),
             ),
             Container(height: 1, color: Colors.grey[400]),
             Padding(
                 padding:
                     EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-                child: formObject("price", Icons.attach_money, "Pris")),
+                child: formObject(TextInputType.number,"price", Icons.attach_money, "Pris")),
             Container(height: 1, color: Colors.grey[400]),
             Padding(
               padding:
@@ -85,8 +85,9 @@ class _CreateAddPageState extends State<CreateAddPage> {
         ));
   }
 
-  Widget formObject(String type, IconData formIcon, String hintText) {
+  Widget formObject(TextInputType textInputType,String type, IconData formIcon, String hintText) {
     return TextFormField(
+      keyboardType: textInputType,
       controller: determineController(type),
       style: TextStyle(
           fontFamily: "Montserrat",

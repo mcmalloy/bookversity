@@ -141,10 +141,10 @@ class FireStoreService {
     for(int i = 0; i<documents.length; i++){
       if(documents[i].get("bookTitle") == bookTitle && documents[i].get("bookOwnerUID") == uid){
         String deletePath = result.docs[i].reference.toString();
-        //await rootRef.doc(deletePath).delete(); // DELETES BOOK
-        await FirebaseFirestore.instance.runTransaction((Transaction myTransaction) async {
-          myTransaction.delete(rootRef.doc(deletePath));
-        });
+        print("Found $bookTitle ... deleting...");
+        print(deletePath);
+        await result.docs[i].reference.delete(); // Delete documents
+        await FirebaseStorage.instance.ref().child(uid).child(bookTitle).delete();
         break;
       }
     }

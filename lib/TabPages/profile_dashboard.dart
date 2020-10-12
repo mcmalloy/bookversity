@@ -58,6 +58,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         backgroundColor: CustomColors.materialLightGreen,
         body: SafeArea(
             child: Stack(
@@ -285,17 +286,17 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
       children: [
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: formObject("book", Icons.book, "Bogtitel"),
+          child: formObject(TextInputType.text, "book", Icons.book, "Bogtitel"),
         ),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: formObject("isbn", Icons.library_books, "ISBN Kode"),
+          child: formObject(TextInputType.number, "isbn", Icons.library_books, "ISBN Kode"),
         ),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
             padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-            child: formObject("price", Icons.attach_money, "Pris")),
+            child: formObject(TextInputType.number, "price", Icons.attach_money, "Pris")),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
           padding: EdgeInsets.only(top: 5, bottom: 20, left: 25, right: 25),
@@ -383,13 +384,14 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
     );
   }
 
-  Widget formObject(String type, IconData formIcon, String hintText) {
+  Widget formObject(TextInputType textInputType, String type, IconData formIcon, String hintText) {
     return Container(
         padding: EdgeInsets.only(left: 5),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             color: Colors.grey.withOpacity(0.5)),
         child: TextFormField(
+          keyboardType: textInputType,
           controller: determineController(type),
           style: TextStyle(
               fontFamily: "Montserrat",

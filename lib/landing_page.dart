@@ -34,6 +34,8 @@ class _LoginPageState extends State<LoginPage> {
   Color existingButtonColor;
   Color signUpButtonColor;
 
+  bool isLoggingIn = false;
+
   CustomShapes _shapes = new CustomShapes();
   CustomDialogs _dialogs = new CustomDialogs();
   @override
@@ -47,7 +49,11 @@ class _LoginPageState extends State<LoginPage> {
     _pageController.dispose();
     super.dispose();
   }
-
+  showProgressIndicator(bool show) {
+    setState(() {
+      isLoggingIn = show;
+    });
+  }
   Widget loginSelector() {
     return Container(
         width: 330,
@@ -154,6 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
               ),
+              isLoggingIn ? CircularProgressIndicator(backgroundColor: CustomColors.materialYellow,) : Container(height: 0,width: 0,),
               Padding(
                   padding: EdgeInsets.only(bottom: 110),
                   child: Row(
@@ -202,9 +209,11 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       onTap: () async {
+        showProgressIndicator(true);
         User userResult = await _authService.facebookLogin();
         if (userResult != null) {
           // TODO: LOG USER IN
+          showProgressIndicator(false);
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => TabPages()));
         } else {
@@ -232,9 +241,11 @@ class _LoginPageState extends State<LoginPage> {
       ),
       onTap: () async {
         User userResult = await _authService.googleLogin();
+        showProgressIndicator(true);
         print("userResult from google sign in: $userResult");
         if (userResult!=null) {
           // TODO: LOG USER IN
+          showProgressIndicator(false);
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => TabPages()));
         }
@@ -268,11 +279,8 @@ class _LoginPageState extends State<LoginPage> {
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               onPressed: () async {
-                print("Attempting login with " +
-                    _emailTextController.text +
-                    " : " +
-                    _passwordController.text);
-                FirebaseUser user = await _authService.emailSignIn(
+                showProgressIndicator(true);
+                User user = await _authService.emailSignIn(
                     _emailTextController.text, _passwordController.text);
                 if (user != null) {
                   Navigator.push(context,
@@ -280,8 +288,6 @@ class _LoginPageState extends State<LoginPage> {
                 } else {
                   //TODO: Catch incorrect login
                 }
-                //FirebaseUser anonUser = await _authService.anonSignIn();
-                //FirebaseUser emailUser = await _authService.emailSignIn("markmalloy96@yahoo.dk", "Test1234");
               },
               child: Text("Login",
                   style: TextStyle(

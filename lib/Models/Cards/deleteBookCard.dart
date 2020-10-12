@@ -100,6 +100,7 @@ class _DeleteBookCardState extends State<DeleteBookCard> {
                   Colors.red
                 ),
                 onPressed: () async {
+                  print("Attempting to delete '${book.bookTitle}'");
                   fireStoreService.deleteBookListing(book.bookTitle);
                   Navigator.of(context).pop();
                 },

@@ -274,17 +274,17 @@ class _MyBooksListViewState extends State<MyBooksListView> {
       children: [
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: formObject("book", Icons.book, "Bogtitel"),
+          child: formObject(TextInputType.text,"book", Icons.book, "Bogtitel"),
         ),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: formObject("isbn", Icons.library_books, "ISBN Kode"),
+          child: formObject(TextInputType.number,"isbn", Icons.library_books, "ISBN Kode"),
         ),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
             padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-            child: formObject("price", Icons.attach_money, "Pris")),
+            child: formObject(TextInputType.number,"price", Icons.attach_money, "Pris")),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
           padding: EdgeInsets.only(top: 5, bottom: 20, left: 25, right: 25),
@@ -338,17 +338,17 @@ class _MyBooksListViewState extends State<MyBooksListView> {
                   });
                   bool uploadResult = await _fireStoreService.uploadBook(book);
                   if (uploadResult) {
+                    final snackBar = SnackBar(
+                        backgroundColor: CustomColors.materialYellow,
+                        content: CustomTextStyle("Din bog er nu sat til salg!",
+                            18, CustomColors.materialDarkGreen));
+                    Scaffold.of(context).showSnackBar(snackBar);
                     //TODO: Finish loading animation and pop container
                     setState(() {
                       showForm = false;
                       _showUploadIndicator = !_showUploadIndicator;
                       getBooks();
                     });
-                    final snackBar = SnackBar(
-                        backgroundColor: CustomColors.materialYellow,
-                        content: CustomTextStyle("Din bog er nu sat til salg!",
-                            18, CustomColors.materialDarkGreen));
-                    Scaffold.of(context).showSnackBar(snackBar);
                   } else {
                     //TODO: Display alertdialog with error
                   }
@@ -402,12 +402,13 @@ class _MyBooksListViewState extends State<MyBooksListView> {
     }
   }
 
-  Widget formObject(String type, IconData formIcon, String hintText) {
+  Widget formObject(TextInputType textInputType, String type, IconData formIcon, String hintText) {
     return Container(
         padding: EdgeInsets.only(left: 5),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20), color: Colors.white),
         child: TextFormField(
+          keyboardType: textInputType ,
           controller: determineController(type),
           style: TextStyle(
               fontFamily: "Montserrat",
