@@ -5,8 +5,6 @@ import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Models/book.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -119,7 +117,6 @@ class _ItemListState extends State<ItemList> {
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             if (index % 2 == 0) {
-              print("URL: ${bookImageURLs[index]}");
               return BookCard(
                   booksForSale[index],
                   _shapes.customListShapeRight(),

@@ -7,14 +7,10 @@ import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Models/Cards/deleteBookCard.dart';
 import 'package:bookversity/Models/book.dart';
-import 'package:bookversity/Pages/customWidgets.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MyBooksListView extends StatefulWidget {

@@ -2,6 +2,7 @@ import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Models/book.dart';
+import 'package:bookversity/Pages/book_details_page.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +34,8 @@ class _BookCardState extends State<BookCard> {
     return InkWell(
       onTap: () {
         //TODO: GO TO BOOK DETAILS PAGE
-
+        print("GOING TO DETAILS");
+        Navigator.push(context, MaterialPageRoute(builder: (context) => BookDetailsPage()));
       },
       child: Container(
           height: 120,
