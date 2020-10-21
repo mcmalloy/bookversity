@@ -6,7 +6,7 @@ import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Models/Cards/deleteBookCard.dart';
-import 'package:bookversity/Models/book.dart';
+import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Objects/book.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';

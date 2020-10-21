@@ -2,7 +2,7 @@ import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Cards/bookCa
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Constants/enums.dart';
-import 'package:bookversity/Models/book.dart';
+import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Objects/book.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +29,7 @@ class _ItemListState extends State<ItemList> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getBooks();
+    fetchBooks();
   }
 
   showProgressIndicator(bool show) {
@@ -38,7 +38,7 @@ class _ItemListState extends State<ItemList> {
     });
   }
 
-  Future<void> getBooks() async {
+  Future<void> fetchBooks() async {
     showProgressIndicator(true);
     _pageTitle = "Alle annoncer";
     List<Book> books = await _fireStoreService.getAllBooks();

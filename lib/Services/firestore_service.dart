@@ -1,7 +1,7 @@
 
 import 'dart:io';
 
-import 'package:bookversity/Models/book.dart';
+import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Objects/book.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,14 +20,14 @@ class FireStoreService {
   Future<bool> uploadBook(Book book) async {
     User user = _authService.getCurrentUser();
     print("uid: " + user.uid);
-    if (await upload(book, user.uid)) {
+    if (await setBookForSale(book, user.uid)) {
       print("Total upload succeess");
       return true;
     }
     return false;
   }
 
-  Future<bool> upload(Book book, String id) async {
+  Future<bool> setBookForSale(Book book, String id) async {
     CollectionReference books = FirebaseFirestore.instance.collection(
         "booksForSale");
     String imageURL = await uploadBookToStorage(book, id);
@@ -112,6 +112,7 @@ class FireStoreService {
     return myBooks;
   }
   Future<List<Book>> getAllBooks() async {
+    String uid = _authService.getCurrentUser().uid;
     List<Book> bookList = new List();
     FirebaseFirestore rootRef = FirebaseFirestore.instance;
     CollectionReference booksReference = rootRef.collection("booksForSale");
@@ -119,14 +120,16 @@ class FireStoreService {
     final QuerySnapshot result = await booksReference.get();
     final List<DocumentSnapshot> documents = result.docs;
     for(int i = 0; i<documents.length; i++){
-      bookList.add(new Book(
-          documents[i].get("bookTitle"),
-          documents[i].get("isbnCode"),
-          documents[i].get("price"),
-          documents[i].get("bookOwnerUID"),
-          null, // Get the picture of the book from storage
-          documents[i].get("imageURL")
-      ));
+      if(documents[i].get("bookOwnerUID") != uid){
+        bookList.add(new Book(
+            documents[i].get("bookTitle"),
+            documents[i].get("isbnCode"),
+            documents[i].get("price"),
+            documents[i].get("bookOwnerUID"),
+            null, // Get the picture of the book from storage
+            documents[i].get("imageURL")
+        ));
+      }
     }
     booksForSale = bookList;
     return bookList;
