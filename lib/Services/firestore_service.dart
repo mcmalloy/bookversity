@@ -1,16 +1,11 @@
 
 import 'dart:io';
 
-import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Objects/book.dart';
+import 'package:bookversity/Models/Objects/book.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:path/path.dart';
 class FireStoreService {
   AuthService _authService = AuthService();
   static List<Book> booksForSale = new List();

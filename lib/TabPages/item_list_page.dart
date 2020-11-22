@@ -1,8 +1,8 @@
-import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Cards/bookCard.dart';
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Constants/enums.dart';
-import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Objects/book.dart';
+import 'package:bookversity/Models/Cards/bookCard.dart';
+import 'package:bookversity/Models/Objects/book.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:flutter/material.dart';

@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/enums.dart';
-import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Models/Objects/book.dart';
-import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Pages/Books/my_book_listings_page.dart';
+import 'package:bookversity/Models/Objects/book.dart';
+import 'package:bookversity/Pages/Books/my_book_listings_page.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Services/state_storage.dart';
-import 'package:bookversity/TabPages/item_list_page.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -36,8 +35,6 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
     super.initState();
     getSignInType();
   }
-
-
 
   void getSignInType() {
     setState(() {
@@ -141,9 +138,10 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
     return Column(
       children: [
         InkWell(
-          onTap: (){
+          onTap: () {
             print("Navigating to item list page");
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MyBooksListView()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => MyBooksListView()));
           },
           child: dashBoardBox(
               140,
@@ -291,12 +289,14 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
         Container(height: 1, color: Colors.grey[400]),
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: formObject(TextInputType.number, "isbn", Icons.library_books, "ISBN Kode"),
+          child: formObject(
+              TextInputType.number, "isbn", Icons.library_books, "ISBN Kode"),
         ),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
             padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-            child: formObject(TextInputType.number, "price", Icons.attach_money, "Pris")),
+            child: formObject(
+                TextInputType.number, "price", Icons.attach_money, "Pris")),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
           padding: EdgeInsets.only(top: 5, bottom: 20, left: 25, right: 25),
@@ -348,7 +348,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                       _priceController.text,
                       _authService.getCurrentUser().uid,
                       _pickedImage,
-                  null);
+                      null);
                   //TODO: Set loading animation
                   setState(() {
                     _showUploadIndicator = true;
@@ -362,7 +362,10 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                     });
                     final snackBar = SnackBar(
                       backgroundColor: CustomColors.materialYellow,
-                      content: Text('Din bog er nu sat til salg!',style: montSerratFont(CustomColors.materialDarkGreen),),
+                      content: Text(
+                        'Din bog er nu sat til salg!',
+                        style: montSerratFont(CustomColors.materialDarkGreen),
+                      ),
                     );
                     Scaffold.of(context).showSnackBar(snackBar);
                   } else {
@@ -384,7 +387,8 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
     );
   }
 
-  Widget formObject(TextInputType textInputType, String type, IconData formIcon, String hintText) {
+  Widget formObject(TextInputType textInputType, String type, IconData formIcon,
+      String hintText) {
     return Container(
         padding: EdgeInsets.only(left: 5),
         decoration: BoxDecoration(
@@ -446,7 +450,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
     return TextStyle(color: color, fontFamily: "Montserrat", fontSize: 20);
   }
 
-  Widget getBookList(){
+  Widget getBookList() {
     List<Book> lists = List<Book>();
     final dbRef = FirebaseDatabase.instance.reference().child("booksForSale");
 
@@ -468,8 +472,8 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text("Book Title: " + lists[index].bookTitle),
-                        Text("ISBN Code: "+ lists[index].isbnCode),
-                        Text("Price: " +lists[index].price),
+                        Text("ISBN Code: " + lists[index].isbnCode),
+                        Text("Price: " + lists[index].price),
                       ],
                     ),
                   );
