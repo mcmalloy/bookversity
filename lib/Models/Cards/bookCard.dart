@@ -47,8 +47,8 @@ class _BookCardState extends State<BookCard> {
           height: 120,
           child: Card(
               margin: EdgeInsets.all(15),
-              shape: shape,
-              color: Colors.purple,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+              color: Colors.white,
               child: symmetry == "right" ? rightRow(book) : leftRow(book))),
     );
   }
@@ -99,11 +99,18 @@ class _BookCardState extends State<BookCard> {
 
   Widget bookInfoText(Book book) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomTextStyle(book.bookTitle, 18, CustomColors.materialYellow),
-        CustomTextStyle(
-            "Pris: ${book.price}kr", 16, CustomColors.materialYellow),
+        Padding(
+          padding: EdgeInsets.only(left: 15,right: 15),
+          child:CustomTextStyle(book.bookTitle, 18, CustomColors.materialDarkGreen),
+        ),
+        SizedBox(height: 20,),
+        Padding(
+          padding: EdgeInsets.only(left: 15,right: 15),
+          child:  CustomTextStyle("Pris: ${book.price}kr", 16, CustomColors.materialDarkGreen),
+        )
       ],
     );
   }

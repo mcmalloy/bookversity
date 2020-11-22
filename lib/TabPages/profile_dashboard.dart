@@ -58,6 +58,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
         resizeToAvoidBottomPadding: false,
         backgroundColor: CustomColors.materialLightGreen,
         body: SafeArea(
+          bottom: true,
             child: Stack(
           children: [
             Column(

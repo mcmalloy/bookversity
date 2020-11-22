@@ -5,6 +5,8 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:io' show Platform;
 
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -97,6 +99,15 @@ class AuthService {
       userCredential = await _auth.signInWithCredential(credential);
       _currentlyLoggedIn = userCredential.user;
       return userCredential.user;
+    }
+
+    Future<User> appleLogin() async {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
     }
 
     /*

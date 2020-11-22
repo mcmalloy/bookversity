@@ -3,18 +3,14 @@ import 'dart:math';
 import 'package:bookversity/Constants/button_switch_color_animation.dart';
 import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Services/auth.dart';
-import 'package:bookversity/Services/state_storage.dart';
 import 'package:bookversity/Widgets/dialogs.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:bookversity/tab_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flare_flutter/flare_actor.dart';
-import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:bookversity/Constants/custom_colors.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'dart:io' show Platform;
 
 class LoginPage extends StatefulWidget {
   @override
@@ -35,7 +31,6 @@ class _LoginPageState extends State<LoginPage> {
   Color signUpButtonColor;
 
   bool isLoggingIn = false;
-
   CustomShapes _shapes = new CustomShapes();
   CustomDialogs _dialogs = new CustomDialogs();
   @override
@@ -49,11 +44,13 @@ class _LoginPageState extends State<LoginPage> {
     _pageController.dispose();
     super.dispose();
   }
+
   showProgressIndicator(bool show) {
     setState(() {
       isLoggingIn = show;
     });
   }
+
   Widget loginSelector() {
     return Container(
         width: 330,
@@ -160,12 +157,23 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
               ),
-              isLoggingIn ? CircularProgressIndicator(backgroundColor: CustomColors.materialYellow,) : Container(height: 0,width: 0,),
+              isLoggingIn
+                  ? CircularProgressIndicator(
+                      backgroundColor: CustomColors.materialYellow,
+                    )
+                  : Container(
+                      height: 0,
+                      width: 0,
+                    ),
               Padding(
                   padding: EdgeInsets.only(bottom: 110),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [facebookIconButton(), googleIconButton()],
+                    children: [
+                      facebookIconButton(),
+                      googleIconButton(),
+                      Platform.isIOS ? appleIconButton() : Container()
+                    ],
                   )),
             ],
           ),
@@ -243,7 +251,37 @@ class _LoginPageState extends State<LoginPage> {
         User userResult = await _authService.googleLogin();
         showProgressIndicator(true);
         print("userResult from google sign in: $userResult");
-        if (userResult!=null) {
+        if (userResult != null) {
+          // TODO: LOG USER IN
+          showProgressIndicator(false);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => TabPages()));
+        }
+      },
+    );
+  }
+  
+  Widget appleIconButton() {
+    return GestureDetector(
+      child: Padding(
+        padding: EdgeInsets.only(left: 40),
+        child: Container(
+          padding: const EdgeInsets.all(15.0),
+          decoration: new BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+          ),
+          child: new Icon(
+            FontAwesomeIcons.apple,
+            color: CustomColors.materialDarkGreen,
+          ),
+        ),
+      ),
+      onTap: () async {
+        User userResult = await _authService.googleLogin();
+        showProgressIndicator(true);
+        print("userResult from google sign in: $userResult");
+        if (userResult != null) {
           // TODO: LOG USER IN
           showProgressIndicator(false);
           Navigator.push(
