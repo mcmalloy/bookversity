@@ -114,8 +114,9 @@ class FireStoreService {
 
     final QuerySnapshot result = await booksReference.get();
     final List<DocumentSnapshot> documents = result.docs;
+    print("match with UID: $uid");
     for(int i = 0; i<documents.length; i++){
-      if(documents[i].get("bookOwnerUID") != uid){
+      if(documents[i].get("bookOwnerUID") == uid){
         bookList.add(new Book(
             documents[i].get("bookTitle"),
             documents[i].get("isbnCode"),
