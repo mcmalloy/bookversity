@@ -1,6 +1,7 @@
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Models/Objects/chat.dart';
+import 'package:bookversity/Services/firebase_chat_service.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,7 @@ class ChatList extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatList> {
-  FireStoreService _fireStoreService = FireStoreService();
+  ChatService chatService = new ChatService();
 
   List<Chat> chatList = new List();
   bool hasChats = false;
@@ -20,7 +21,7 @@ class _ChatListState extends State<ChatList> {
     // TODO: implement initState
     super.initState();
     showLoading(true);
-
+    fetchChatList();
   }
 
   void showLoading(bool show){
@@ -29,9 +30,17 @@ class _ChatListState extends State<ChatList> {
     });
   }
 
-  Future<void> loadChatList() async {
-    await _fireStoreService.getAllBooks();
+  Future<void> fetchChatList() async {
+    List<Chat> chatsResult = await chatService.fetchChats();
     showLoading(false);
+    if(chatsResult.isEmpty){
+      // display no chats
+    }
+    else{
+      setState(() {
+        chatList = chatsResult;
+      });
+    }
   }
 
 

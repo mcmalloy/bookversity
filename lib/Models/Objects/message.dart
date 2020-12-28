@@ -13,3 +13,5 @@ class Message {
     'messageSentTime' : messageSentTime,
   };
 }
+
+
