@@ -116,7 +116,6 @@ class FireStoreService {
     final List<DocumentSnapshot> documents = result.docs;
     print("match with UID: $uid");
     for(int i = 0; i<documents.length; i++){
-      if(documents[i].get("bookOwnerUID") == uid){
         bookList.add(new Book(
             documents[i].get("bookTitle"),
             documents[i].get("isbnCode"),
@@ -125,7 +124,6 @@ class FireStoreService {
             null, // Get the picture of the book from storage
             documents[i].get("imageURL")
         ));
-      }
     }
     booksForSale = bookList;
     return bookList;

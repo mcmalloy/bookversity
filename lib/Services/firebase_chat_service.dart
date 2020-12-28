@@ -1,4 +1,6 @@
 
+import 'package:bookversity/Models/Objects/chat.dart';
+import 'package:bookversity/Models/Objects/message.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -6,12 +8,26 @@ class ChatService{
   FirebaseFirestore chatReference = FirebaseFirestore.instance;
 
   Future<bool> createChat(String sellerID, String buyerID, String firstMessage) async{
-    CollectionReference newChat = chatReference.collection("chats");
-    newChat.add({
+    DateTime lastActivityDate = DateTime.now();
+
+    Message message = new Message(firstMessage, buyerID, true,lastActivityDate);
+    List<Message> messages = new List<Message>();
+    messages.add(message);
+    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
+
+    Chat newChat = Chat(messages,firstMessage,lastActivityDate,buyerID,sellerID);
+    print("chat json: ");
+    print(newChat.toJson());
+
+    CollectionReference newConversation = chatReference.collection("chats");
+    newConversation.add({
+      'lastActivityDate' : lastActivityDate,
+      'lastMessage' : firstMessage,
       'sellerID': sellerID,
       'buyerID': buyerID,
+      'messages' : firstMessage
     }).then((value) {
-      print("Chat has been created with id: ${newChat.id}");
+      print("Chat has been created with id: ${newConversation.id}");
       return true;
     }).catchError((onError) {
       print(onError);
@@ -20,11 +36,11 @@ class ChatService{
     return true;
   }
 
-  Future<bool> sendFirstMessage(String sellerID, String buyerID, String firstMessage) async{
-    FirebaseFirestore messageReference = FirebaseFirestore.instance;
-
+  Future<void> sendMessage(String message){
 
   }
+
+
 
 
 
