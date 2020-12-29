@@ -13,7 +13,7 @@ class Chat{
       this.sellerID);
 
   Map<String, dynamic> toJson() => {
-    'messages' : messages,
+    'messages' :messages.map((message) => message.toJson()).toList(),
     'lastMessage' : messages.last,
     'lastActivityDate' : lastActivityDate,
     'buyerID' : buyerID,
