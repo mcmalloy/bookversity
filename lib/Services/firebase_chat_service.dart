@@ -12,18 +12,8 @@ class ChatService{
   Future<bool> createChat(String sellerID, String buyerID, String firstMessage) async{
     DateTime lastActivityDate = DateTime.now();
     Message message = new Message(firstMessage, buyerID, true,lastActivityDate);
-    List<Message> messages = new List<Message>();
+    List<Message> messages = [];
     messages.add(message);
-    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
-    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
-    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
-    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
-    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
-    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
-
-    Chat newChat = Chat(messages,firstMessage,lastActivityDate,buyerID,sellerID);
-    print("chat json: ");
-    print(newChat.toJson());
 
     CollectionReference newConversation = chatReference.collection("chats");
     newConversation.add({
@@ -31,7 +21,6 @@ class ChatService{
       'lastMessage' : firstMessage,
       'sellerID': sellerID,
       'buyerID': buyerID,
-      //'messages' : messages.first.toJson(),
       'messages' : messages.map((message) => message.toJson()).toList()
     }).then((value) {
       print("Chat has been created with id: ${newConversation.id}");
@@ -49,22 +38,30 @@ class ChatService{
 
   Future<List<Chat>> fetchChats() async {
     String uid = _authService.getCurrentUser().uid;
-    List<Chat> chats;
+    Query query = FirebaseFirestore.instance.collection("chats");
+
+    List<Chat> chats = [];
     CollectionReference conversations = chatReference.collection("chats");
-    final QuerySnapshot result = await conversations.get();
+    //final QuerySnapshot result = await conversations.get();
+    print("establishing query....");
+    query = query.where("sellerID", isEqualTo: uid);
+    final QuerySnapshot result = await query.get();
     final List<DocumentSnapshot> documents = result.docs;
-    
+    print("query successful");
+    print("document: ${documents.toString()}");
     //Find all chats with users uid
     for(int i = 0; i<documents.length; i++){
-      if(documents[i].get("buyerID") == uid || documents[i].get("sellerID") == uid){
+      print(documents[i].get("messages"));
+      List<Message> messages = Message.fromJson(documents[i].get("messages"));
         chats.add(new Chat(
-          documents[i].get("messages"),
+          messages,
+          //documents[i].get("messages"),
           documents[i].get("lastMessage"),
           documents[i].get("lastActivityDate"),
           documents[i].get("buyerID"),
           documents[i].get("sellerID"),
         ));
-      }
+        print(chats[i].toJson());
     }
 
     return chats;

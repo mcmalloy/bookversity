@@ -31,6 +31,7 @@ class _ChatListState extends State<ChatList> {
   }
 
   Future<void> fetchChatList() async {
+    print("Fetching chats");
     List<Chat> chatsResult = await chatService.fetchChats();
     showLoading(false);
     if(chatsResult.isEmpty){
