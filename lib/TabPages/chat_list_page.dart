@@ -80,7 +80,11 @@ class _ChatListState extends State<ChatList> {
       return showEmptyBody();
     }
     else if(chatList.isNotEmpty){
-      return showChatList();
+      return Container(
+        height: 600,
+        width: 400,
+        child: showChatList(),
+      );
     }
   }
 
@@ -95,7 +99,106 @@ class _ChatListState extends State<ChatList> {
   }
 
   Widget showChatList(){
-    return Container();
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 4),
+      itemCount: chatList.length,
+      itemBuilder: (BuildContext context, int index) {
+        return GestureDetector(
+          onTap: () {
+            //TODO: Navigate to chat details
+          },
+          child: Container(
+            color: Colors.white,
+            padding: EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 15,
+            ),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(2),
+                  decoration: chatList[index].lastMessage.isNotEmpty
+                      ? BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(40)),
+                    border: Border.all(
+                      width: 2,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    // shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                      ),
+                    ],
+                  )
+                      : BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                      ),
+                    ],
+                  )
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.65,
+                  padding: EdgeInsets.only(
+                    left: 20,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                "Buyer ${chatList[index].buyerID}",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            chatList[index].lastActivityDate.toString(),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          chatList[index].lastMessage,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.black54,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
 }

@@ -14,16 +14,16 @@ class ChatService{
     Message message = new Message(firstMessage, buyerID, true,lastActivityDate);
     List<Message> messages = [];
     messages.add(message);
+    messages.add(message);
 
     CollectionReference newConversation = chatReference.collection("chats");
     newConversation.add({
-      'lastActivityDate' : lastActivityDate,
+      'lastActivityDate' : lastActivityDate.toString(),
       'lastMessage' : firstMessage,
       'sellerID': sellerID,
       'buyerID': buyerID,
       'messages' : messages.map((message) => message.toJson()).toList()
     }).then((value) {
-      print("Chat has been created with id: ${newConversation.id}");
       return true;
     }).catchError((onError) {
       print(onError);
@@ -39,44 +39,32 @@ class ChatService{
   Future<List<Chat>> fetchChats() async {
     String uid = _authService.getCurrentUser().uid;
     Query query = FirebaseFirestore.instance.collection("chats");
-
     List<Chat> chats = [];
-    CollectionReference conversations = chatReference.collection("chats");
-    //final QuerySnapshot result = await conversations.get();
-    print("establishing query....");
+
     query = query.where("sellerID", isEqualTo: uid);
     final QuerySnapshot result = await query.get();
     final List<DocumentSnapshot> documents = result.docs;
-    print("query successful");
-    print("document: ${documents.toString()}");
+
     //Find all chats with users uid
     for(int i = 0; i<documents.length; i++){
-      print(documents[i].get("messages"));
-      List<Message> messages = Message.fromJson(documents[i].get("messages"));
-        chats.add(new Chat(
-          messages,
-          //documents[i].get("messages"),
+      List<dynamic> message = documents[i].get("messages");
+      chats.add(new Chat(
+          convertToList(message),
           documents[i].get("lastMessage"),
-          documents[i].get("lastActivityDate"),
+          DateTime.parse(documents[i].get("lastActivityDate")),
           documents[i].get("buyerID"),
           documents[i].get("sellerID"),
         ));
-        print(chats[i].toJson());
     }
-
     return chats;
-    
   }
 
-
-
-
-
-
-
-
-
-
-
+  List<Message> convertToList(List<dynamic> messages){
+    List<Message> beskeder = [];
+    for(int i = 0; i<messages.length; i++){
+      beskeder.add(Message.fromJson(messages[i]));
+    }
+    return beskeder;
+  }
 
 }

@@ -19,5 +19,6 @@ class Chat{
     'buyerID' : buyerID,
     'sellerID' : sellerID,
   };
+
 }
 

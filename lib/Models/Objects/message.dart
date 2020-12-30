@@ -6,18 +6,27 @@ class Message {
   DateTime messageSentTime;
   Message(this.message, this.sentByID, this.isBuyer, this.messageSentTime);
 
-  Message.fromJson(Map<String, dynamic> json)
-      :
-        message = json['message'],
-        sentByID = json['sentByID'],
-        isBuyer = json['isBuyer'],
-        messageSentTime = json['messageSentTime'];
+  factory Message.fromJson(Map<String, dynamic> json){
+    return Message(
+      json['message'],
+      json['sentByID'],
+      json['isBuyer'] as bool,
+      DateTime.parse(json['messageSentTime']),
+    );
+  }
+  /*
+   message : json['message'],
+        sentByID : json['sentByID'],
+        isBuyer : json['isBuyer'],
+        messageSentTime : DateTime.parse(json['messageSentTime'])
+   */
+
 
   Map<String, dynamic> toJson() => {
     'message' : message,
     'sentByID' : sentByID,
     'isBuyer' : isBuyer,
-    'messageSentTime' : messageSentTime,
+    'messageSentTime' : messageSentTime.toString(),
   };
    
 }
