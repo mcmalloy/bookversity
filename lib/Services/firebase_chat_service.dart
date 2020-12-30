@@ -9,11 +9,10 @@ class ChatService{
   FirebaseFirestore chatReference = FirebaseFirestore.instance;
   AuthService _authService = AuthService();
 
-  Future<bool> createChat(String sellerID, String buyerID, String firstMessage) async{
+  Future<bool> createChat(String sellerID, String buyerID, String firstMessage, String imageURL, String bookTitle) async{
     DateTime lastActivityDate = DateTime.now();
     Message message = new Message(firstMessage, buyerID, true,lastActivityDate);
     List<Message> messages = [];
-    messages.add(message);
     messages.add(message);
 
     CollectionReference newConversation = chatReference.collection("chats");
@@ -22,7 +21,9 @@ class ChatService{
       'lastMessage' : firstMessage,
       'sellerID': sellerID,
       'buyerID': buyerID,
-      'messages' : messages.map((message) => message.toJson()).toList()
+      'messages' : messages.map((message) => message.toJson()).toList(),
+      'imageURL' : imageURL,
+      'bookTitle' : bookTitle
     }).then((value) {
       return true;
     }).catchError((onError) {
@@ -54,6 +55,8 @@ class ChatService{
           DateTime.parse(documents[i].get("lastActivityDate")),
           documents[i].get("buyerID"),
           documents[i].get("sellerID"),
+          documents[i].get("imageURL"),
+          documents[i].get("bookTitle")
         ));
     }
     return chats;

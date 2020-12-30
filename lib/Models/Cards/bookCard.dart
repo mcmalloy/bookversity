@@ -33,6 +33,7 @@ class _BookCardState extends State<BookCard> {
       this.url,
       this.myListings
   );
+
   @override
   Widget build(BuildContext context) {
     return InkWell(

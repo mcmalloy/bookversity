@@ -8,9 +8,10 @@ class Chat{
   DateTime lastActivityDate;
   String buyerID;
   String sellerID;
-
+  String imageURL;
+  String bookTitle;
   Chat(this.messages, this.lastMessage, this.lastActivityDate, this.buyerID,
-      this.sellerID);
+      this.sellerID, this.imageURL, this.bookTitle);
 
   Map<String, dynamic> toJson() => {
     'messages' :messages.map((message) => message.toJson()).toList(),
@@ -18,6 +19,8 @@ class Chat{
     'lastActivityDate' : lastActivityDate,
     'buyerID' : buyerID,
     'sellerID' : sellerID,
+    'imageURL' : imageURL,
+    'bookTitle' : bookTitle
   };
 
 }

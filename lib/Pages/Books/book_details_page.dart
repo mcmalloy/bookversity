@@ -235,7 +235,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
               String uid = _authService.getCurrentUser().uid;
               print("Open initiate chat between user: $uid and ${book.userID}");
               bool uploadResult = await chatService.createChat(
-                  uid, book.userID, firstMessageController.text);
+                  uid, book.userID, firstMessageController.text, imageURL, book.bookTitle);
               if (uploadResult) {
                 //TODO: Finish loading animation and pop container
                 setState(() {

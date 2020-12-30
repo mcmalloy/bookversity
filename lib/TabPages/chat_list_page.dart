@@ -1,8 +1,10 @@
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Models/Objects/chat.dart';
+import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firebase_chat_service.dart';
 import 'package:bookversity/Services/firestore_service.dart';
+import 'package:bookversity/Services/state_storage.dart';
 import 'package:flutter/material.dart';
 
 class ChatList extends StatefulWidget {
@@ -12,10 +14,11 @@ class ChatList extends StatefulWidget {
 
 class _ChatListState extends State<ChatList> {
   ChatService chatService = new ChatService();
-
   List<Chat> chatList = new List();
   bool hasChats = false;
   bool isLoading = false;
+  AuthService _authService = AuthService();
+  String uid;
   @override
   void initState() {
     // TODO: implement initState
@@ -39,6 +42,7 @@ class _ChatListState extends State<ChatList> {
     }
     else{
       setState(() {
+        uid = _authService.getCurrentUser().uid;
         chatList = chatsResult;
       });
     }
@@ -142,7 +146,11 @@ class _ChatListState extends State<ChatList> {
                         blurRadius: 5,
                       ),
                     ],
-                  )
+                  ),
+                  child: CircleAvatar(
+                    radius: 35,
+                    backgroundImage: NetworkImage("${chatList[index].imageURL}"),
+                  ),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.65,
@@ -157,7 +165,8 @@ class _ChatListState extends State<ChatList> {
                           Row(
                             children: <Widget>[
                               Text(
-                                "Buyer ${chatList[index].buyerID}",
+                                chatList[index].buyerID == uid ?
+                                "Salg af ${chatList[index].bookTitle}" : "Køb af ${chatList[index].bookTitle}",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -166,7 +175,7 @@ class _ChatListState extends State<ChatList> {
                             ],
                           ),
                           Text(
-                            chatList[index].lastActivityDate.toString(),
+                            lastMessageDateString(chatList[index].lastActivityDate),
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w300,
@@ -199,6 +208,14 @@ class _ChatListState extends State<ChatList> {
         );
       },
     );
+  }
+
+  String lastMessageDateString(DateTime lastActivityDate){
+    String day = lastActivityDate.day.toString();
+    String month = lastActivityDate.month.toString();
+    String hour = lastActivityDate.hour.toString();
+    String minute = lastActivityDate.minute.toString();
+    return "${hour}:${minute}";
   }
 
 }
