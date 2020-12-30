@@ -1,6 +1,7 @@
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Models/Objects/chat.dart';
+import 'package:bookversity/Pages/Chats/chat_details_page.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firebase_chat_service.dart';
 import 'package:bookversity/Services/firestore_service.dart';
@@ -35,7 +36,7 @@ class _ChatListState extends State<ChatList> {
 
   Future<void> fetchChatList() async {
     print("Fetching chats");
-    List<Chat> chatsResult = await chatService.fetchChats();
+    List<Chat> chatsResult = await chatService.fetchChats("sellerID") + await chatService.fetchChats("buyerID");
     showLoading(false);
     if(chatsResult.isEmpty){
       // display no chats
@@ -110,101 +111,107 @@ class _ChatListState extends State<ChatList> {
         return GestureDetector(
           onTap: () {
             //TODO: Navigate to chat details
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailsPage(chatList[index])));
           },
-          child: Container(
-            color: Colors.white,
-            padding: EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 15,
-            ),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(2),
-                  decoration: chatList[index].lastMessage.isNotEmpty
-                      ? BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(40)),
-                    border: Border.all(
-                      width: 2,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    // shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                      ),
-                    ],
-                  )
-                      : BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    radius: 35,
-                    backgroundImage: NetworkImage("${chatList[index].imageURL}"),
-                  ),
+          child: Column(
+            children: [
+              Padding(padding: EdgeInsets.symmetric(vertical: 4),),
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 15,
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.65,
-                  padding: EdgeInsets.only(
-                    left: 20,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: chatList[index].lastMessage.isNotEmpty
+                          ? BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(40)),
+                        border: Border.all(
+                          width: 2,
+                          color: CustomColors.materialDarkGreen,
+                        ),
+                        // shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      )
+                          : BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 35,
+                        backgroundImage: NetworkImage("${chatList[index].imageURL}"),
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.65,
+                      padding: EdgeInsets.only(
+                          left: 20
+                      ),
+                      child: Column(
                         children: <Widget>[
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    chatList[index].buyerID == uid ?
+                                    "Salg af ${chatList[index].bookTitle}" : "Køb af ${chatList[index].bookTitle}",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               Text(
-                                chatList[index].buyerID == uid ?
-                                "Salg af ${chatList[index].bookTitle}" : "Køb af ${chatList[index].bookTitle}",
+                                lastMessageDateString(chatList[index].lastActivityDate),
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.black54,
                                 ),
                               ),
                             ],
                           ),
-                          Text(
-                            lastMessageDateString(chatList[index].lastActivityDate),
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w300,
-                              color: Colors.black54,
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              chatList[index].lastMessage,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.black54,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          chatList[index].lastMessage,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.black54,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            ],
+          )
         );
       },
     );

@@ -73,6 +73,7 @@ class FireStoreService {
     List<String> urls = new List();
     for(int i = 0; i<bookList.length; i++){
       imageLocation = FirebaseStorage.instance.ref().child(bookList[i].userID).child(bookList[i].bookTitle);
+      print("book: ${bookList[i].bookTitle}");
       urls.add(await imageLocation.getDownloadURL());
     }
     return urls;

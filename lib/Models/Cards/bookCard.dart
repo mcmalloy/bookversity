@@ -40,7 +40,6 @@ class _BookCardState extends State<BookCard> {
       onTap: () {
         //TODO: GO TO BOOK DETAILS PAGE
         if(!myListings){
-          print("Going to details!");
           Navigator.push(context, MaterialPageRoute(builder: (context) => BookDetailsPage(book,url)));
         }
       },

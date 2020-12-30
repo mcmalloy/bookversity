@@ -25,7 +25,6 @@ class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   User getCurrentUser() {
-    print("Getting info from current user: ${_auth.currentUser}");
     return _auth.currentUser;
   }
 
@@ -35,8 +34,6 @@ class AuthService {
       _auth.signInAnonymously();
       UserCredential userCredential = await _auth.signInAnonymously();
       user = userCredential.user;
-      print("Firebase response: $userCredential");
-      print("Firebase user: $user");
       return user;
     } catch (e) {
       print(e.toString());
@@ -109,25 +106,6 @@ class AuthService {
         ],
       );
     }
-
-    /*
-    AuthCredential credential;
-    GoogleSignInAccount signInAccount = await _googleSignIn.signIn().then((result){
-      result.authentication.then((googleKey){
-         idToken = googleKey.idToken;
-         accessToken = googleKey.accessToken;
-        credential = GoogleAuthProvider.credential(idToken: idToken,accessToken: accessToken);
-        print("google credential is: $credential");
-      }).catchError((e){
-        print(e);
-      });
-    }).catchError((err){
-      print(e);
-    });
-    print("google credential is1: $credential");
-    userCredential = await _auth.signInWithCredential(credential);
-    return userCredential.user;
-     */
   }
 
   Future<User> facebookLogin() async {
@@ -139,7 +117,7 @@ class AuthService {
       // Set the loginType to facebookSignIn, such that the profile page will load a profile image
       _loginType = LoginType.facebookSignIn;
       _storageService.saveFacebookUID(accessToken.userId);
-      print("Retrieving authCredentials from accesToken: ${accessToken.token}");
+      //print("Retrieving authCredentials from accesToken: ${accessToken.token}");
       // Authenticate the facebook user with firebase and officially log in as a firebase User
       AuthCredential credential =
           FacebookAuthProvider.credential(accessToken.token);
@@ -147,7 +125,6 @@ class AuthService {
       _currentlyLoggedIn = userCredential.user;
       return userCredential.user;
     } else if (result.status == FacebookLoginStatus.cancelledByUser) {
-      print('Login cancelled by the user.');
       facebookSignIn.loginBehavior = FacebookLoginBehavior.webViewOnly;
       final result = await facebookSignIn.logIn(['email']);
       if (result.status == FacebookLoginStatus.loggedIn) {
@@ -156,7 +133,6 @@ class AuthService {
             .user;
         return user;
       }
-      print('CANCELED BY USER');
       return null;
     } else {
       print(
@@ -168,7 +144,6 @@ class AuthService {
   Future<bool> facebookLogout() async {
     await facebookSignIn.logOut();
     bool isLoggedIn = await facebookSignIn.isLoggedIn;
-    print("Facebook isLoggedIn: $isLoggedIn");
     if (isLoggedIn) {
       return true;
     } else {
@@ -180,14 +155,9 @@ class AuthService {
     await _auth.signOut();
     User currentUser = _auth.currentUser;
     if (currentUser == null) {
-      print("Logged out succesfully");
       return true;
     }
     return false;
-  }
-
-  String getProfilePictureUri() {
-    return "http://graph.facebook.com/$facebookUID/picture?type=square";
   }
 
   LoginType getSignInType() {

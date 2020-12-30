@@ -36,13 +36,12 @@ class ChatService{
   Future<void> sendMessage(String message) async {
 
   }
-
-  Future<List<Chat>> fetchChats() async {
+  Future<List<Chat>> fetchChats(String idType) async {
     String uid = _authService.getCurrentUser().uid;
     Query query = FirebaseFirestore.instance.collection("chats");
     List<Chat> chats = [];
 
-    query = query.where("sellerID", isEqualTo: uid);
+    query = query.where(idType, isEqualTo: uid);
     final QuerySnapshot result = await query.get();
     final List<DocumentSnapshot> documents = result.docs;
 
