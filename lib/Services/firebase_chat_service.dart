@@ -15,6 +15,11 @@ class ChatService{
     List<Message> messages = new List<Message>();
     messages.add(message);
     messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
+    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
+    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
+    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
+    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
+    messages.add(Message("Second Message!", buyerID, true,lastActivityDate));
 
     Chat newChat = Chat(messages,firstMessage,lastActivityDate,buyerID,sellerID);
     print("chat json: ");
@@ -26,7 +31,8 @@ class ChatService{
       'lastMessage' : firstMessage,
       'sellerID': sellerID,
       'buyerID': buyerID,
-      'messages' : firstMessage
+      //'messages' : messages.first.toJson(),
+      'messages' : messages.map((message) => message.toJson()).toList()
     }).then((value) {
       print("Chat has been created with id: ${newConversation.id}");
       return true;
@@ -43,7 +49,7 @@ class ChatService{
 
   Future<List<Chat>> fetchChats() async {
     String uid = _authService.getCurrentUser().uid;
-    List<Chat> chats = new List<Chat>();
+    List<Chat> chats;
     CollectionReference conversations = chatReference.collection("chats");
     final QuerySnapshot result = await conversations.get();
     final List<DocumentSnapshot> documents = result.docs;

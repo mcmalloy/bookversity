@@ -220,7 +220,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                       color: CustomColors.materialDarkGreen),
                 ),
                 onChanged: (controller) {
-                  print("Changed ${controller.toString()}");
                 },
               )),
         ),

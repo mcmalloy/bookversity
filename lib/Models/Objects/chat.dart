@@ -14,7 +14,7 @@ class Chat{
 
   Map<String, dynamic> toJson() => {
     'messages' :messages.map((message) => message.toJson()).toList(),
-    'lastMessage' : messages.last,
+    'lastMessage' : messages.last.toJson(),
     'lastActivityDate' : lastActivityDate,
     'buyerID' : buyerID,
     'sellerID' : sellerID,
