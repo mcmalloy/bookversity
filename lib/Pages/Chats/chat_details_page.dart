@@ -1,9 +1,13 @@
-
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Models/Objects/chat.dart';
+import 'package:bookversity/Models/Objects/message.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_bubble/bubble_type.dart';
+import 'package:flutter_chat_bubble/chat_bubble.dart';
+import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_1.dart';
+import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_2.dart';
 
 class ChatDetailsPage extends StatefulWidget {
   Chat chat;
@@ -14,6 +18,7 @@ class ChatDetailsPage extends StatefulWidget {
 
 class _ChatDetailsPageState extends State<ChatDetailsPage> {
   Chat chat;
+  List<Message> messages = [];
   String uid;
   AuthService _authService = AuthService();
   _ChatDetailsPageState(this.chat);
@@ -24,6 +29,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     super.initState();
     setState(() {
       uid = _authService.getCurrentUser().uid;
+      messages = chat.messages;
     });
   }
 
@@ -34,17 +40,13 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         body: SafeArea(
           child: Container(
             child: Column(
-              children: [
-                topBar(),
-                loadedContent()
-              ],
+              children: [topBar(), loadedContent()],
             ),
           ),
-        )
-    );
+        ));
   }
 
-  Widget topBar(){
+  Widget topBar() {
     return Container(
         decoration: BoxDecoration(color: Colors.white, boxShadow: [
           BoxShadow(
@@ -53,12 +55,151 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         width: double.infinity,
         padding: EdgeInsets.only(left: 16, bottom: 5, right: 12),
         child: CustomTextStyle(
-          chat.buyerID == uid ?
-            "Salg af ${chat.bookTitle}" : "Køb af ${chat.bookTitle}", 32, CustomColors.materialDarkGreen)
-    );
+            chat.buyerID == uid
+                ? "Salg af ${chat.bookTitle}"
+                : "Køb af ${chat.bookTitle}",
+            32,
+            CustomColors.materialDarkGreen));
   }
 
   Widget loadedContent() {
-    return Container();
+    return Container(
+      height: 600,
+      width: 400,
+      child: createChatBubbles(),
+    );
+  }
+
+  Widget createChatBubbles() {
+    return ListView.builder(
+        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 4),
+        itemCount: messages.length,
+        itemBuilder: (BuildContext context, int index) {
+          return messages[index].sentByID == uid ? receiverChatbubble(messages[index]) : senderChatBubble(messages[index]);
+        });
+  }
+
+  Widget senderChatBubble(Message chat) {
+    return ChatBubble(
+      clipper: ChatBubbleClipper2(type: BubbleType.sendBubble),
+      alignment: Alignment.topRight,
+      margin: EdgeInsets.only(top: 20),
+      backGroundColor: Colors.blue,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.7,
+        ),
+        child: Text(
+          chat.message,
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Widget receiverChatbubble(Message chat) {
+    return ChatBubble(
+      clipper: ChatBubbleClipper1(type: BubbleType.receiverBubble),
+      backGroundColor: Color(0xffE7E7ED),
+      margin: EdgeInsets.only(top: 20),
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.7,
+        ),
+        child: Text(
+          chat.message,
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
+    );
+  }
+
+  Widget messageList() {
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 4),
+      itemCount: messages.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+            ),
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 15,
+              ),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(40)),
+                        border: Border.all(
+                          width: 2,
+                          color: CustomColors.materialDarkGreen,
+                        ),
+                        // shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      )),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.65,
+                    padding: EdgeInsets.only(left: 20),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              lastMessageDateString(
+                                  messages[index].messageSentTime),
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w300,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            messages[index].message,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.black54,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String lastMessageDateString(DateTime lastActivityDate) {
+    String day = lastActivityDate.day.toString();
+    String month = lastActivityDate.month.toString();
+    String hour = lastActivityDate.hour.toString();
+    String minute = lastActivityDate.minute.toString();
+    return "${hour}:${minute}";
   }
 }

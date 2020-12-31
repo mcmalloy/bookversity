@@ -69,4 +69,16 @@ class ChatService{
     return beskeder;
   }
 
+  Future<Chat> fetchChat(String bookTitle) async {
+    List<Chat> chats = [];
+    chats = await fetchChats("buyerID");
+    print("Finding correct chat....");
+    for(int i = 0; i<chats.length; i++){
+      print("${chats[i].bookTitle}");
+    }
+    int chatIndex =  chats.indexWhere((chat) => chat.bookTitle == bookTitle);
+    print("index is $chatIndex");
+    return chats[chatIndex];
+  }
+
 }

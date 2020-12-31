@@ -1,6 +1,8 @@
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Models/Objects/book.dart';
+import 'package:bookversity/Models/Objects/chat.dart';
+import 'package:bookversity/Pages/Chats/chat_details_page.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firebase_chat_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';
@@ -227,13 +229,10 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         RaisedButton(
             onPressed: () async {
               // Create chat object
-
-              //TODO: Set loading animation
               setState(() {
                 _showUploadIndicator = true;
               });
               String uid = _authService.getCurrentUser().uid;
-              print("Open initiate chat between user: $uid and ${book.userID}");
               bool uploadResult = await chatService.createChat(
                   uid, book.userID, firstMessageController.text, imageURL, book.bookTitle);
               if (uploadResult) {
@@ -242,6 +241,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                   _showChatBox = !_showChatBox;
                   _showUploadIndicator = !_showUploadIndicator;
                 });
+                navigateToChatDetail();
               } else {
                 //TODO: Display alertdialog with error
               }
@@ -252,5 +252,10 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 : Text("Send Besked"))
       ],
     );
+  }
+
+  Future<void> navigateToChatDetail() async {
+    Chat chat = await chatService.fetchChat(book.bookTitle);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailsPage(chat)));
   }
 }
