@@ -33,8 +33,22 @@ class ChatService{
     return true;
   }
 
-  Future<void> sendMessage(String message) async {
+  Future<void> sendMessage(Message message) async {
+    String uid = _authService.getCurrentUser().uid;
 
+    CollectionReference chat = chatReference.collection("chats").where(message.isBuyer ? "isBuyer" : "isSeller",isEqualTo: uid );
+
+    /*
+    firestore.instance.
+    .collection('friendships')
+    .document(caller.data["uid"])
+    .updateData({
+  friends: FieldValue.arrayUnion({
+    friendDisplayName: snapshot.data["friendDisplayName"],
+    friendUid: snapshot.ref
+  })
+});
+     */
   }
   Future<List<Chat>> fetchChats(String idType) async {
     String uid = _authService.getCurrentUser().uid;

@@ -3,6 +3,7 @@ import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Models/Objects/chat.dart';
 import 'package:bookversity/Models/Objects/message.dart';
 import 'package:bookversity/Services/auth.dart';
+import 'package:bookversity/Services/firebase_chat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
@@ -20,7 +21,11 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   Chat chat;
   List<Message> messages = [];
   String uid;
+  TextEditingController _chatController = TextEditingController();
+  bool sendingChat = false;
+
   AuthService _authService = AuthService();
+  ChatService _chatService = ChatService();
   _ChatDetailsPageState(this.chat);
 
   @override
@@ -40,7 +45,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         body: SafeArea(
           child: Container(
             child: Column(
-              children: [topBar(), loadedContent()],
+              children: [topBar(), loadedContent(), chatField()],
             ),
           ),
         ));
@@ -63,10 +68,9 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Widget loadedContent() {
-    return Container(
-      height: 600,
-      width: 400,
-      child: createChatBubbles(),
+    return Expanded(
+      child: MediaQuery.removePadding(
+          context: context, child: createChatBubbles()),
     );
   }
 
@@ -75,7 +79,9 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 4),
         itemCount: messages.length,
         itemBuilder: (BuildContext context, int index) {
-          return messages[index].sentByID == uid ? receiverChatbubble(messages[index]) : senderChatBubble(messages[index]);
+          return messages[index].sentByID == uid
+              ? receiverChatbubble(messages[index])
+              : senderChatBubble(messages[index]);
         });
   }
 
@@ -192,6 +198,65 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
           ],
         );
       },
+    );
+  }
+
+  Widget chatField() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
+      child: SizedBox(
+        height: 60,
+        child: chatInput(),
+      ),
+    );
+  }
+
+  Widget chatInput() {
+    return Container(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+        child: Row(
+          children: [
+            Flexible(
+              child: Container(
+                child: TextField(
+                  style: TextStyle(color: Colors.black, fontSize: 15.0),
+                  decoration: InputDecoration.collapsed(
+                      hintText: "Indtast Besked",
+                      hintStyle: TextStyle(color: Colors.grey)),
+                ),
+              ),
+            ),
+            Material(
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
+                child: sendingChat
+                    ? CircularProgressIndicator()
+                    : IconButton(icon: Icon(Icons.send), onPressed: () {
+                     if(_chatController.text.isNotEmpty){
+                       Message message = new Message(_chatController.text, uid, chat.buyerID == uid ? false : true, DateTime.now());
+                       _chatService.sendMessage(message);
+                     }
+                },
+                  color: Colors.black,
+                ),
+                color: Colors.white,
+              ),
+
+            )
+          ],
+        ),
+      ),
+      width: double.infinity,
+      height: 50.0,
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Colors.black.withOpacity(0.6), width: 0.5,
+          )
+        ), color: Colors.white
+      )
+
     );
   }
 
