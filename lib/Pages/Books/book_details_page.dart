@@ -233,8 +233,9 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 _showUploadIndicator = true;
               });
               String uid = _authService.getCurrentUser().uid;
+              print("buyerID is: $uid");
               bool uploadResult = await chatService.createChat(
-                  uid, book.userID, firstMessageController.text, imageURL, book.bookTitle);
+                  book.userID, uid, firstMessageController.text, imageURL, book.bookTitle);
               if (uploadResult) {
                 //TODO: Finish loading animation and pop container
                 setState(() {

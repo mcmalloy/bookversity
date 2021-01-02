@@ -79,9 +79,9 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 4),
         itemCount: messages.length,
         itemBuilder: (BuildContext context, int index) {
-          return messages[index].sentByID == uid
-              ? receiverChatbubble(messages[index])
-              : senderChatBubble(messages[index]);
+          return messages[index].sentByID == chat.buyerID
+              ? senderChatBubble(messages[index])
+              : receiverChatbubble(messages[index]);
         });
   }
 
@@ -220,6 +220,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             Flexible(
               child: Container(
                 child: TextField(
+                  controller: _chatController,
                   style: TextStyle(color: Colors.black, fontSize: 15.0),
                   decoration: InputDecoration.collapsed(
                       hintText: "Indtast Besked",
@@ -234,8 +235,10 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
                     ? CircularProgressIndicator()
                     : IconButton(icon: Icon(Icons.send), onPressed: () {
                      if(_chatController.text.isNotEmpty){
+                       print("Is it buyer sending message? ${chat.buyerID == uid}");
+                       print(uid);
                        Message message = new Message(_chatController.text, uid, chat.buyerID == uid ? false : true, DateTime.now());
-                       _chatService.sendMessage(message);
+                       sendMessage(message);
                      }
                 },
                   color: Colors.black,
@@ -261,10 +264,12 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   String lastMessageDateString(DateTime lastActivityDate) {
-    String day = lastActivityDate.day.toString();
-    String month = lastActivityDate.month.toString();
     String hour = lastActivityDate.hour.toString();
     String minute = lastActivityDate.minute.toString();
     return "${hour}:${minute}";
+  }
+
+  Future<void> sendMessage(Message message) async {
+    await _chatService.sendMessage(message, chat);
   }
 }

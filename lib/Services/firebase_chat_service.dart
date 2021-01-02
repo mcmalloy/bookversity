@@ -15,15 +15,15 @@ class ChatService{
     List<Message> messages = [];
     messages.add(message);
 
-    CollectionReference newConversation = chatReference.collection("chats");
-    newConversation.add({
+    chatReference.collection("chats").doc("${sellerID}-${buyerID}-${bookTitle}").set({
       'lastActivityDate' : lastActivityDate.toString(),
       'lastMessage' : firstMessage,
       'sellerID': sellerID,
       'buyerID': buyerID,
       'messages' : messages.map((message) => message.toJson()).toList(),
       'imageURL' : imageURL,
-      'bookTitle' : bookTitle
+      'bookTitle' : bookTitle,
+      'chatID' : "${sellerID}-${buyerID}-${bookTitle}"
     }).then((value) {
       return true;
     }).catchError((onError) {
@@ -33,22 +33,15 @@ class ChatService{
     return true;
   }
 
-  Future<void> sendMessage(Message message) async {
+  Future<void> sendMessage(Message message, Chat chat) async {
     String uid = _authService.getCurrentUser().uid;
-
-    CollectionReference chat = chatReference.collection("chats").where(message.isBuyer ? "isBuyer" : "isSeller",isEqualTo: uid );
-
-    /*
-    firestore.instance.
-    .collection('friendships')
-    .document(caller.data["uid"])
-    .updateData({
-  friends: FieldValue.arrayUnion({
-    friendDisplayName: snapshot.data["friendDisplayName"],
-    friendUid: snapshot.ref
-  })
-});
-     */
+    String chatID = "${chat.sellerID}-${chat.buyerID}-${chat.bookTitle}";
+    chat.messages.add(message);
+    print("Sending message!");
+    final firestoreInstance = FirebaseFirestore.instance;
+    firestoreInstance.collection("chats").doc(chatID).update({
+      "messages" : chat.messages.map((message) => message.toJson()).toList()
+    });
   }
   Future<List<Chat>> fetchChats(String idType) async {
     String uid = _authService.getCurrentUser().uid;
