@@ -9,7 +9,7 @@ import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_1.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_2.dart';
-
+import 'dart:async';
 class ChatDetailsPage extends StatefulWidget {
   Chat chat;
   ChatDetailsPage(this.chat);
@@ -23,7 +23,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   String uid;
   TextEditingController _chatController = TextEditingController();
   bool sendingChat = false;
-
+  Timer timer;
   AuthService _authService = AuthService();
   ChatService _chatService = ChatService();
   _ChatDetailsPageState(this.chat);
@@ -36,6 +36,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       uid = _authService.getCurrentUser().uid;
       messages = chat.messages;
     });
+    refreshChat();
   }
 
   @override
@@ -61,8 +62,8 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         padding: EdgeInsets.only(left: 16, bottom: 5, right: 12),
         child: CustomTextStyle(
             chat.buyerID == uid
-                ? "Salg af ${chat.bookTitle}"
-                : "Køb af ${chat.bookTitle}",
+                ? "Køb af ${chat.bookTitle}"
+                : "Salg af ${chat.bookTitle}",
             32,
             CustomColors.materialDarkGreen));
   }
@@ -79,7 +80,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 4),
         itemCount: messages.length,
         itemBuilder: (BuildContext context, int index) {
-          return messages[index].sentByID == chat.buyerID
+          return messages[index].sentByID == uid
               ? senderChatBubble(messages[index])
               : receiverChatbubble(messages[index]);
         });
@@ -235,10 +236,11 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
                     ? CircularProgressIndicator()
                     : IconButton(icon: Icon(Icons.send), onPressed: () {
                      if(_chatController.text.isNotEmpty){
-                       print("Is it buyer sending message? ${chat.buyerID == uid}");
-                       print(uid);
                        Message message = new Message(_chatController.text, uid, chat.buyerID == uid ? false : true, DateTime.now());
                        sendMessage(message);
+                       _chatController.clear();
+                       FocusScope.of(context).unfocus();
+                       refreshChat();
                      }
                 },
                   color: Colors.black,
@@ -271,5 +273,15 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
   Future<void> sendMessage(Message message) async {
     await _chatService.sendMessage(message, chat);
+  }
+
+  Future<void> refreshChat() async {
+    Chat _tempChat = await _chatService.fetchChat("${chat.sellerID}-${chat.buyerID}-${chat.bookTitle}");
+    setState(() {
+      chat = _tempChat;
+    });
+    timer = new Timer(Duration(seconds: 5), () {
+      refreshChat();
+    });
   }
 }

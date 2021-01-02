@@ -256,7 +256,9 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   }
 
   Future<void> navigateToChatDetail() async {
-    Chat chat = await chatService.fetchChat(book.bookTitle);
+    String uid = _authService.getCurrentUser().uid;
+    String chatID = "${book.userID}-${uid}-${book.bookTitle}";
+    Chat chat = await chatService.fetchChat(chatID);
     Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailsPage(chat)));
   }
 }

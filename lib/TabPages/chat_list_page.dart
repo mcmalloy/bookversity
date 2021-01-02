@@ -170,7 +170,7 @@ class _ChatListState extends State<ChatList> {
                               Row(
                                 children: <Widget>[
                                   Text(
-                                    chatList[index].buyerID == uid ?
+                                    chatList[index].buyerID != uid ?
                                     "Salg af ${chatList[index].bookTitle}" : "Køb af ${chatList[index].bookTitle}",
                                     style: TextStyle(
                                       fontSize: 16,

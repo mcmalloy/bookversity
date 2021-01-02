@@ -40,7 +40,9 @@ class ChatService{
     print("Sending message!");
     final firestoreInstance = FirebaseFirestore.instance;
     firestoreInstance.collection("chats").doc(chatID).update({
-      "messages" : chat.messages.map((message) => message.toJson()).toList()
+      'messages' : chat.messages.map((message) => message.toJson()).toList(),
+      'lastActivityDate' : DateTime.now().toString(),
+      'lastMessage' : message.message
     });
   }
   Future<List<Chat>> fetchChats(String idType) async {
@@ -76,16 +78,20 @@ class ChatService{
     return beskeder;
   }
 
-  Future<Chat> fetchChat(String bookTitle) async {
-    List<Chat> chats = [];
-    chats = await fetchChats("buyerID");
-    print("Finding correct chat....");
-    for(int i = 0; i<chats.length; i++){
-      print("${chats[i].bookTitle}");
-    }
-    int chatIndex =  chats.indexWhere((chat) => chat.bookTitle == bookTitle);
-    print("index is $chatIndex");
-    return chats[chatIndex];
+  Future<Chat> fetchChat(String chatID) async {
+    final firestoreInstance = FirebaseFirestore.instance;
+    DocumentSnapshot snapshot = await firestoreInstance.collection("chats").doc(chatID).get();
+    List<dynamic> message = snapshot.get("messages");
+
+    return new Chat(
+        convertToList(message),
+        snapshot.get("lastMessage"),
+        DateTime.parse(snapshot.get("lastActivityDate")),
+        snapshot.get("buyerID"),
+        snapshot.get("sellerID"),
+        snapshot.get("imageURL"),
+        snapshot.get("bookTitle")
+    );
   }
 
 }
