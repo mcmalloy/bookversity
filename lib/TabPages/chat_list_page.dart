@@ -167,30 +167,32 @@ class _ChatListState extends State<ChatList> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    chatList[index].buyerID != uid ?
-                                    "Salg af ${chatList[index].bookTitle}" : "Køb af ${chatList[index].bookTitle}",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                              Flexible(
+                                flex: 6,
+                                child: Text(
+                                  chatList[index].buyerID != uid ?
+                                  "Salg af '${chatList[index].bookTitle}'" : "Køb af '${chatList[index].bookTitle}'",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
-                              ),
-                              Text(
-                                lastMessageDateString(chatList[index].lastActivityDate),
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.black54,
                                 ),
                               ),
+                              Flexible(
+                                flex: 1,
+                                child: Text(
+                                  lastMessageDateString(chatList[index].lastActivityDate),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                           SizedBox(
-                            height: 10,
+                            height: 12,
                           ),
                           Container(
                             alignment: Alignment.topLeft,

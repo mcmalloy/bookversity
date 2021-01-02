@@ -36,8 +36,9 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       uid = _authService.getCurrentUser().uid;
       messages = chat.messages;
     });
-    refreshChat();
-  }
+    timer = new Timer(Duration(seconds: 5), () {
+      refreshChat();
+    });  }
 
   @override
   Widget build(BuildContext context) {
