@@ -280,6 +280,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     Chat _tempChat = await _chatService.fetchChat("${chat.sellerID}-${chat.buyerID}-${chat.bookTitle}");
     setState(() {
       chat = _tempChat;
+      messages = chat.messages;
     });
     timer = new Timer(Duration(seconds: 5), () {
       refreshChat();
