@@ -10,6 +10,7 @@ import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_1.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_2.dart';
 import 'dart:async';
+
 class ChatDetailsPage extends StatefulWidget {
   Chat chat;
   ChatDetailsPage(this.chat);
@@ -38,12 +39,13 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     });
     timer = new Timer(Duration(seconds: 5), () {
       refreshChat();
-    });  }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xffE7E7ED),
         body: SafeArea(
           child: Container(
             child: Column(
@@ -87,38 +89,59 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         });
   }
 
+  String createDateString(DateTime time){
+   String hour = time.hour.toString();
+   String minute = time.minute.toString();
+
+   return "${hour}:${minute}";
+  }
+
   Widget senderChatBubble(Message chat) {
-    return ChatBubble(
-      clipper: ChatBubbleClipper2(type: BubbleType.sendBubble),
-      alignment: Alignment.topRight,
-      margin: EdgeInsets.only(top: 20),
-      backGroundColor: Colors.blue,
-      child: Container(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.7,
+    return Column(
+      children: [
+        ChatBubble(
+          clipper: ChatBubbleClipper2(type: BubbleType.sendBubble),
+          alignment: Alignment.topRight,
+          margin: EdgeInsets.only(top: 20),
+          backGroundColor: CustomColors.materialDarkGreen,
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+            ),
+            child: Text(
+              chat.message,
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
         ),
-        child: Text(
-          chat.message,
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+        Padding(
+            padding: EdgeInsets.only(top: 6, left: 340),
+            child: Text(createDateString(chat.messageSentTime), style: TextStyle(color: Colors.grey[700], fontSize: 12.0),)),
+      ],
     );
   }
 
   Widget receiverChatbubble(Message chat) {
-    return ChatBubble(
-      clipper: ChatBubbleClipper1(type: BubbleType.receiverBubble),
-      backGroundColor: Color(0xffE7E7ED),
-      margin: EdgeInsets.only(top: 20),
-      child: Container(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.7,
-        ),
-        child: Text(
-          chat.message,
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
+    return Column(
+      children: [
+    ChatBubble(
+    clipper: ChatBubbleClipper1(type: BubbleType.receiverBubble),
+    backGroundColor: CustomColors.materialYellow,
+    margin: EdgeInsets.only(top: 20),
+    child: Container(
+    constraints: BoxConstraints(
+    maxWidth: MediaQuery.of(context).size.width * 0.7,
+    ),
+    child: Text(
+    chat.message,
+    style: TextStyle(color: Colors.black),
+    ),
+    ),
+    ),
+        Padding(
+            padding: EdgeInsets.only(top: 6, right: 340),
+            child: Text(createDateString(chat.messageSentTime), style: TextStyle(color: Colors.grey[700], fontSize: 12.0),)),
+      ],
     );
   }
 
@@ -215,55 +238,58 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
   Widget chatInput() {
     return Container(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: Row(
-          children: [
-            Flexible(
-              child: Container(
-                child: TextField(
-                  controller: _chatController,
-                  style: TextStyle(color: Colors.black, fontSize: 15.0),
-                  decoration: InputDecoration.collapsed(
-                      hintText: "Indtast Besked",
-                      hintStyle: TextStyle(color: Colors.grey)),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+          child: Row(
+            children: [
+              Flexible(
+                child: Container(
+                  child: TextField(
+                    controller: _chatController,
+                    style: TextStyle(color: Colors.black, fontSize: 15.0),
+                    decoration: InputDecoration.collapsed(
+                        hintText: "Indtast Besked",
+                        hintStyle: TextStyle(color: Colors.grey)),
+                  ),
                 ),
               ),
-            ),
-            Material(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 8.0),
-                child: sendingChat
-                    ? CircularProgressIndicator()
-                    : IconButton(icon: Icon(Icons.send), onPressed: () {
-                     if(_chatController.text.isNotEmpty){
-                       Message message = new Message(_chatController.text, uid, chat.buyerID == uid ? false : true, DateTime.now());
-                       sendMessage(message);
-                       _chatController.clear();
-                       FocusScope.of(context).unfocus();
-                       refreshChat();
-                     }
-                },
-                  color: Colors.black,
+              Material(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: sendingChat
+                      ? CircularProgressIndicator()
+                      : IconButton(
+                          icon: Icon(Icons.send),
+                          onPressed: () {
+                            if (_chatController.text.isNotEmpty) {
+                              Message message = new Message(
+                                  _chatController.text,
+                                  uid,
+                                  chat.buyerID == uid ? false : true,
+                                  DateTime.now());
+                              sendMessage(message);
+                              _chatController.clear();
+                              FocusScope.of(context).unfocus();
+                              refreshChat();
+                            }
+                          },
+                          color: Colors.black,
+                        ),
+                  color: Colors.white,
                 ),
-                color: Colors.white,
-              ),
-
-            )
-          ],
+              )
+            ],
+          ),
         ),
-      ),
-      width: double.infinity,
-      height: 50.0,
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: Colors.black.withOpacity(0.6), width: 0.5,
-          )
-        ), color: Colors.white
-      )
-
-    );
+        width: double.infinity,
+        height: 50.0,
+        decoration: BoxDecoration(
+            border: Border(
+                top: BorderSide(
+              color: Colors.black.withOpacity(0.6),
+              width: 0.5,
+            )),
+            color: Colors.white));
   }
 
   String lastMessageDateString(DateTime lastActivityDate) {
@@ -277,7 +303,8 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Future<void> refreshChat() async {
-    Chat _tempChat = await _chatService.fetchChat("${chat.sellerID}-${chat.buyerID}-${chat.bookTitle}");
+    Chat _tempChat = await _chatService
+        .fetchChat("${chat.sellerID}-${chat.buyerID}-${chat.bookTitle}");
     setState(() {
       chat = _tempChat;
       messages = chat.messages;

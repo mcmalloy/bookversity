@@ -109,76 +109,79 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    LoginType loginType;
     return Scaffold(
       backgroundColor: CustomColors.materialLightGreen,
-      body: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height >= 775.0
-              ? MediaQuery.of(context).size.height
-              : 775.0,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 75.0),
-                  child: new Image(
-                    height: 200,
-                    width: 150,
-                    fit: BoxFit.fill,
-                    image: new AssetImage('assets/bookversity_mascot_logo.png'),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 20.0),
-                child: loginSelector(),
-              ),
-              Expanded(
-                flex: 3,
-                child: PageView(
-                  controller: _pageController,
-                  children: [_signInPage(), _signUpPage()],
-                  onPageChanged: (i) {
-                    if (i == 0) {
-                      setState(() {
-                        existingButtonColor = Colors.white;
-                        signUpButtonColor = Colors.black;
-                      });
-                    } else if (i == 1) {
-                      setState(() {
-                        existingButtonColor = Colors.black;
-                        signUpButtonColor = Colors.white;
-                      });
-                    }
-                  },
-                ),
-              ),
-              isLoggingIn
-                  ? CircularProgressIndicator(
-                      backgroundColor: CustomColors.materialYellow,
-                    )
-                  : Container(
-                      height: 0,
-                      width: 0,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height >= 775.0
+                  ? MediaQuery.of(context).size.height
+                  : 775.0,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 75.0),
+                      child: new Image(
+                        height: 200,
+                        width: 150,
+                        fit: BoxFit.fill,
+                        image: new AssetImage('assets/bookversity_mascot_logo.png'),
+                      ),
                     ),
-              Padding(
-                  padding: EdgeInsets.only(bottom: 110),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      facebookIconButton(),
-                      googleIconButton(),
-                      Platform.isIOS ? appleIconButton() : Container()
-                    ],
-                  )),
-            ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 20.0),
+                    child: loginSelector(),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: PageView(
+                      controller: _pageController,
+                      children: [_signInPage(), _signUpPage()],
+                      onPageChanged: (i) {
+                        if (i == 0) {
+                          setState(() {
+                            existingButtonColor = Colors.white;
+                            signUpButtonColor = Colors.black;
+                          });
+                        } else if (i == 1) {
+                          setState(() {
+                            existingButtonColor = Colors.black;
+                            signUpButtonColor = Colors.white;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  Padding(
+                      padding: EdgeInsets.only(bottom: 110),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          facebookIconButton(),
+                          googleIconButton(),
+                          Platform.isIOS ? appleIconButton() : Container()
+                        ],
+                      )),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+          isLoggingIn
+              ? Center(
+            child: CircularProgressIndicator(backgroundColor: CustomColors.materialYellow),
+          )
+              : Container(
+            height: 0,
+            width: 0,
+          ),
+        ],
+      )
     );
   }
 
@@ -260,7 +263,7 @@ class _LoginPageState extends State<LoginPage> {
       },
     );
   }
-  
+
   Widget appleIconButton() {
     return GestureDetector(
       child: Padding(

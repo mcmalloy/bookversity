@@ -75,18 +75,19 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                       new AssetImage('assets/bookversity_facebook_profile.png'),
                 ),
                 SizedBox(
-                  height: 30,
+                  height: 60,
+                ),
+                Flexible(
+                  flex: 2,
+                  child: centerDashBoardWidget(),
                 ),
                 Flexible(
                   flex: 2,
                   child: topDashBoardWidgets(),
                 ),
-                SizedBox(
-                  height: 32,
-                ),
-                Flexible(
-                  flex: 3,
-                  child: centerDashBoardWidget(),
+                Padding(
+                  padding: EdgeInsets.only(top: 65),
+                  child: logoutButton(),
                 )
               ],
             ),
@@ -106,21 +107,23 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        /*
         dashBoardBox(
-            180,
-            140,
+            160,
+            160,
             customBoxShape(Colors.greenAccent[400], Colors.green[300]),
             "Mine\noplysninger",
             20,
             Icons.person_outline),
-        SizedBox(
+            SizedBox(
           width: 25,
         ),
+         */
         InkWell(
           child: dashBoardBox(
-              200,
-              200,
-              customBoxShape(Colors.red[300], Colors.orange),
+              140,
+              345,
+              customBoxShape(CustomColors.materialYellow, Colors.orange[500]),
               "Ny annonce",
               21,
               Icons.attach_money),
@@ -146,19 +149,12 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
           },
           child: dashBoardBox(
               140,
-              360,
-              customBoxShape(Colors.purple[200], Colors.purpleAccent[700]),
+              345,
+              customBoxShape(Colors.blue[300], Colors.blue[700]),
               "Mine annoncer",
               22,
               Icons.book),
         ),
-        SizedBox(
-          height: 30,
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 50),
-          child: logoutButton(),
-        )
       ],
     );
   }

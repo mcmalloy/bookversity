@@ -59,7 +59,7 @@ class _ChatListState extends State<ChatList> {
           child: Column(
             children: [
               topBar(),
-              isLoading ? CircularProgressIndicator() : loadedContent()
+              isLoading ? Center(child: CircularProgressIndicator(),) : loadedContent()
             ],
           ),
         ),
