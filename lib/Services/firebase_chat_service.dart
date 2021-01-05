@@ -4,6 +4,7 @@ import 'package:bookversity/Models/Objects/message.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class ChatService{
   FirebaseFirestore chatReference = FirebaseFirestore.instance;
@@ -92,6 +93,10 @@ class ChatService{
         snapshot.get("imageURL"),
         snapshot.get("bookTitle")
     );
+  }
+
+  Future<void> sendNotification() async {
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   }
 
 }

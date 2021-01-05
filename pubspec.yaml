@@ -44,6 +44,7 @@ dependencies:
   font_awesome_flutter: ^8.8.1
   shared_preferences: ^0.5.4+8
   flutter_chat_bubble: ^1.0.2
+  firebase_messaging: ^7.0.3
 
   camera:
   path_provider:
