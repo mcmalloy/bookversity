@@ -46,8 +46,8 @@ android {
         applicationId "mcmalloy.bookversity"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode 2
+        versionName "1.0"
         multiDexEnabled true
     }
 
