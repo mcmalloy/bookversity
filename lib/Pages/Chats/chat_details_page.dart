@@ -4,6 +4,7 @@ import 'package:bookversity/Models/Objects/chat.dart';
 import 'package:bookversity/Models/Objects/message.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firebase_chat_service.dart';
+import 'package:bookversity/TabPages/chat_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
@@ -52,7 +53,8 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
               children: [topBar(), loadedContent(), chatField()],
             ),
           ),
-        ));
+        )
+    );
   }
 
   Widget topBar() {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Models/Objects/chat.dart';
@@ -20,12 +22,19 @@ class _ChatListState extends State<ChatList> {
   bool isLoading = false;
   AuthService _authService = AuthService();
   String uid;
+
+  Timer timer;
+  ChatService _chatService = ChatService();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     showLoading(true);
     fetchChatList();
+    timer = new Timer(Duration(seconds: 5), () {
+      refreshChat();
+    });
   }
 
   void showLoading(bool show){
@@ -225,6 +234,16 @@ class _ChatListState extends State<ChatList> {
     String hour = lastActivityDate.hour.toString();
     String minute = lastActivityDate.minute.toString();
     return "${hour}:${minute}";
+  }
+
+  Future<void> refreshChat() async {
+    List<Chat> _tempChatList = await chatService.fetchChats("sellerID") + await chatService.fetchChats("buyerID");
+    setState(() {
+      chatList = _tempChatList;
+    });
+    timer = new Timer(Duration(seconds: 5), () {
+      refreshChat();
+    });
   }
 
 }

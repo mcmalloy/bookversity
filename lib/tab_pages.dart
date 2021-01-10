@@ -1,6 +1,7 @@
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/TabPages/profile_dashboard.dart';
+import 'package:flutter/services.dart';
 import 'TabPages/chat_list_page.dart';
 import 'TabPages/item_list_page.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class _TabPagesState extends State<TabPages> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return WillPopScope(child: DefaultTabController(
       length: 3,
       child: Scaffold(
         bottomNavigationBar: menu(),
@@ -35,7 +36,9 @@ class _TabPagesState extends State<TabPages> {
           ],
         ),
       ),
-    );
+    ), onWillPop: (){
+      return SystemNavigator.pop();
+    });
   }
 
   Widget menu() {

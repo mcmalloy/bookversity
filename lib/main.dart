@@ -1,4 +1,5 @@
 import 'package:bookversity/Constants/custom_colors.dart';
+import 'package:bookversity/TabPages/chat_list_page.dart';
 import 'package:bookversity/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -33,7 +34,10 @@ class MyApp extends StatelessWidget {
           endAnimation: '5',
           backgroundColor: CustomColors.materialLightGreen,
 
-        )
+        ),
+      routes: {
+          '/chatListPage' : (BuildContext context) => ChatList()
+      },
     );
   }
 }
