@@ -55,6 +55,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         resizeToAvoidBottomPadding: false,
         backgroundColor: CustomColors.materialLightGreen,
         body: SafeArea(
@@ -62,6 +63,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
             child: Stack(
           children: [
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
                   height: 20,
@@ -73,9 +75,6 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                   fit: BoxFit.fill,
                   image:
                       new AssetImage('assets/bookversity_facebook_profile.png'),
-                ),
-                SizedBox(
-                  height: 60,
                 ),
                 Flexible(
                   flex: 2,
@@ -92,7 +91,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
               ],
             ),
             _showAdBox
-                ? Container(color: Colors.grey.withOpacity(0.7))
+                ? Container(color: Colors.grey.withOpacity(0.9))
                 : Container(
                     height: 0,
                   ),
@@ -140,6 +139,8 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
 
   Widget centerDashBoardWidget() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         InkWell(
           onTap: () {

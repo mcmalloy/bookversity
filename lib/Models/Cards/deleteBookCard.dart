@@ -28,19 +28,13 @@ class _DeleteBookCardState extends State<DeleteBookCard> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        //TODO: Delete this card from Firebase
-        deleteDialog(book, context);
-      },
-      child: Container(
-          height: 120,
-          child: Card(
-              margin: EdgeInsets.all(15),
-              shape: shape,
-              color: Colors.purple,
-              child: leftRow(book))),
-    );
+    return Container(
+        height: 120,
+        child: Card(
+            margin: EdgeInsets.all(15),
+            shape: shape,
+            color: Colors.purple,
+            child: leftRow(book)));
   }
 
   Widget leftRow(Book book) {
@@ -105,7 +99,6 @@ class _DeleteBookCardState extends State<DeleteBookCard> {
                 onPressed: () async {
                   print("Attempting to delete '${book.bookTitle}'");
                   fireStoreService.deleteBookListing(book.bookTitle);
-                  Navigator.of(context).pop();
                 },
               ),
               FlatButton(

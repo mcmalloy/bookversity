@@ -141,7 +141,7 @@ class FireStoreService {
         String deletePath = result.docs[i].reference.toString();
         print("Found $bookTitle ... deleting...");
         print(deletePath);
-        await deleteChatIfExists(result.docs[i]);
+        //await deleteChatIfExists(result.docs[i]);
         await result.docs[i].reference.delete(); // Delete documents
         await FirebaseStorage.instance.ref().child(uid).child(bookTitle).delete();
         break;

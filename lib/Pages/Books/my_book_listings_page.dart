@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bookversity/Constants/custom_colors.dart';
@@ -48,17 +49,19 @@ class _MyBooksListViewState extends State<MyBooksListView> {
   }
 
   Future<void> getBooks() async {
-    showProgressIndicator(true);
-    List<Book> books = await _fireStoreService.getMyBooks();
-    print("Is books empty: " + books.isEmpty.toString());
-    if (books.isNotEmpty) {
-      setState(() {
-        booksForSale = books;
-        getBookImageURLs();
-      });
-    } else {
-      showProgressIndicator(false);
-    }
+    new Timer(Duration(milliseconds: 40), () async {
+      showProgressIndicator(true);
+      List<Book> books = await _fireStoreService.getMyBooks();
+      if (books.isNotEmpty) {
+        setState(() {
+          showProgressIndicator(false);
+          booksForSale = books;
+          getBookImageURLs();
+        });
+      } else {
+        showProgressIndicator(false);
+      }
+    });
   }
 
   Future<void> getBookImageURLs() async {
@@ -77,27 +80,30 @@ class _MyBooksListViewState extends State<MyBooksListView> {
     return Scaffold(
         backgroundColor: CustomColors.materialLightGreen,
         body: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 60,
-                width: double.infinity,
-                child: Container(color: Colors.white),
-              ),
-              topBar(),
-              isLoading
-                  ? Expanded(
-                      flex: 10,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          backgroundColor: CustomColors.materialYellow,
-                        ),
-                      ),
-                    )
-                  : _loadedContent(),
-            ],
-          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 60,
+                  width: double.infinity,
+                  child: Container(color: Colors.white),
+                ),
+                topBar(),
+                isLoading
+                    ? Expanded(
+                  flex: 10,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: CustomColors.materialYellow,
+                    ),
+                  ),
+                )
+                    : _loadedContent(),
+              ],
+            ),
+          )
         ));
   }
 
@@ -175,17 +181,17 @@ class _MyBooksListViewState extends State<MyBooksListView> {
   }
 
   Widget determineCardType(int index) {
-    FireStoreService _fireStoreService = FireStoreService();
-    Image image = Image.network(bookImageURLs[index]);
     if (listingType == ListingType.myBooksForSale) {
       print("printing book");
       return BookCard(booksForSale[index], _shapes.customListShapeLeft(),
-          "left", bookImageURLs[index],true);
+          "left", bookImageURLs[index], true);
     } else if (listingType == ListingType.deleteBooksForSale) {
-      return DeleteBookCard(
-        booksForSale[index],
-        _shapes.customListShapeLeft(),
-        bookImageURLs[index]
+      return InkWell(
+        onTap: () {
+          deleteDialog(booksForSale[index], context);
+        },
+        child: DeleteBookCard(booksForSale[index],
+            _shapes.customListShapeLeft(), bookImageURLs[index]),
       );
     }
     return null;
@@ -231,7 +237,6 @@ class _MyBooksListViewState extends State<MyBooksListView> {
         SizedBox(
           height: 95,
         ),
-        //!showForm ? animateBetween(createListingButton()) : animateBetween(createListingForm())
         animateTest()
       ],
     );
@@ -271,17 +276,19 @@ class _MyBooksListViewState extends State<MyBooksListView> {
       children: [
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: formObject(TextInputType.text,"book", Icons.book, "Bogtitel"),
+          child: formObject(TextInputType.text, "book", Icons.book, "Bogtitel"),
         ),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
           padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-          child: formObject(TextInputType.number,"isbn", Icons.library_books, "ISBN Kode"),
+          child: formObject(
+              TextInputType.number, "isbn", Icons.library_books, "ISBN Kode"),
         ),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
             padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
-            child: formObject(TextInputType.number,"price", Icons.attach_money, "Pris")),
+            child: formObject(
+                TextInputType.number, "price", Icons.attach_money, "Pris")),
         Container(height: 1, color: Colors.grey[400]),
         Padding(
           padding: EdgeInsets.only(top: 5, bottom: 20, left: 25, right: 25),
@@ -358,13 +365,14 @@ class _MyBooksListViewState extends State<MyBooksListView> {
     );
   }
 
-  void showUploadedSnackbar(){
+  void showUploadedSnackbar() {
     final snackBar = SnackBar(
         backgroundColor: CustomColors.materialYellow,
-        content: CustomTextStyle("Din bog er nu sat til salg!",
-            18, CustomColors.materialDarkGreen));
+        content: CustomTextStyle(
+            "Din bog er nu sat til salg!", 18, CustomColors.materialDarkGreen));
     Scaffold.of(context).showSnackBar(snackBar);
   }
+
   Image showImage() {
     return Image(
       image: _image,
@@ -401,13 +409,14 @@ class _MyBooksListViewState extends State<MyBooksListView> {
     }
   }
 
-  Widget formObject(TextInputType textInputType, String type, IconData formIcon, String hintText) {
+  Widget formObject(TextInputType textInputType, String type, IconData formIcon,
+      String hintText) {
     return Container(
         padding: EdgeInsets.only(left: 5),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20), color: Colors.white),
         child: TextFormField(
-          keyboardType: textInputType ,
+          keyboardType: textInputType,
           controller: determineController(type),
           style: TextStyle(
               fontFamily: "Montserrat",
@@ -430,5 +439,41 @@ class _MyBooksListViewState extends State<MyBooksListView> {
             print("Changed ${controller.toString()}");
           },
         ));
+  }
+
+  void deleteDialog(Book book, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: CustomTextStyle(
+                "Fjern opslag", 22, CustomColors.materialDarkGreen),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15))),
+            content: CustomTextStyle(
+                "Er du sikker på at du vil fjerne ${book.bookTitle}",
+                18,
+                CustomColors.materialDarkGreen),
+            elevation: 3,
+            actions: [
+              FlatButton(
+                child: CustomTextStyle("Slet Annonce", 16, Colors.red),
+                onPressed: () async {
+                  print("Attempting to delete '${book.bookTitle}'");
+                  await _fireStoreService.deleteBookListing(book.bookTitle);
+                  getBooks();
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: CustomTextStyle(
+                    "Behold Annonce", 16, CustomColors.materialLightGreen),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 }
