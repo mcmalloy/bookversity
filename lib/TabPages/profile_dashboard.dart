@@ -59,47 +59,47 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
         resizeToAvoidBottomPadding: false,
         backgroundColor: CustomColors.materialLightGreen,
         body: SafeArea(
-          bottom: true,
+            bottom: true,
             child: Stack(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 20,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 20,
+                    ),
+                    new Image(
+                      alignment: Alignment.topLeft,
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.fill,
+                      image: new AssetImage(
+                          'assets/bookversity_facebook_profile.png'),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: centerDashBoardWidget(),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: topDashBoardWidgets(),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 65),
+                      child: logoutButton(),
+                    )
+                  ],
                 ),
-                new Image(
-                  alignment: Alignment.topLeft,
-                  height: 80,
-                  width: 80,
-                  fit: BoxFit.fill,
-                  image:
-                      new AssetImage('assets/bookversity_facebook_profile.png'),
-                ),
-                Flexible(
-                  flex: 2,
-                  child: centerDashBoardWidget(),
-                ),
-                Flexible(
-                  flex: 2,
-                  child: topDashBoardWidgets(),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 65),
-                  child: logoutButton(),
+                _showAdBox
+                    ? Container(color: Colors.grey.withOpacity(0.9))
+                    : Container(
+                        height: 0,
+                      ),
+                Container(
+                  child: createListingBox(),
                 )
               ],
-            ),
-            _showAdBox
-                ? Container(color: Colors.grey.withOpacity(0.9))
-                : Container(
-                    height: 0,
-                  ),
-            Container(
-              child: createListingBox(),
-            )
-          ],
-        )));
+            )));
   }
 
   Widget topDashBoardWidgets() {
@@ -340,34 +340,57 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
               RaisedButton(
                 onPressed: () async {
                   // Create book object
-                  Book book = new Book(
-                      _bookNameController.text,
-                      _isbnController.text,
-                      _priceController.text,
-                      _authService.getCurrentUser().uid,
-                      _pickedImage,
-                      null);
-                  //TODO: Set loading animation
-                  setState(() {
-                    _showUploadIndicator = true;
-                  });
-                  bool uploadResult = await _fireStoreService.uploadBook(book);
-                  if (uploadResult) {
-                    //TODO: Finish loading animation and pop container
+                  if ((_bookNameController.text.isNotEmpty &&
+                      (_isbnController.text.isNotEmpty && _isNumeric(_isbnController.text)) &&
+                      (_priceController.text.isNotEmpty && _isNumeric(_priceController.text))&&
+                      _pickedImage != null)) {
+                    Book book = new Book(
+                        _bookNameController.text,
+                        _isbnController.text,
+                        _priceController.text,
+                        _authService.getCurrentUser().uid,
+                        _pickedImage,
+                        null);
+                    //TODO: Set loading animation
                     setState(() {
-                      _showAdBox = !_showAdBox;
-                      _showUploadIndicator = !_showUploadIndicator;
+                      _showUploadIndicator = true;
                     });
-                    final snackBar = SnackBar(
+                    bool uploadResult =
+                        await _fireStoreService.uploadBook(book);
+                    if (uploadResult) {
+                      //TODO: Finish loading animation and pop container
+                      setState(() {
+                        _showAdBox = !_showAdBox;
+                        _showUploadIndicator = !_showUploadIndicator;
+                      });
+                      final snackBar = SnackBar(
+                        backgroundColor: CustomColors.materialYellow,
+                        content: Text(
+                          'Din bog er nu sat til salg!',
+                          style: montSerratFont(CustomColors.materialDarkGreen),
+                        ),
+                      );
+                      Scaffold.of(context).showSnackBar(snackBar);
+                    } else {
+                      //TODO: Display alertdialog with error
+                    }
+                  } else {
+                    String missingFields = "${_bookNameController.text.isEmpty ? "- Bogtitel" : ""}"
+                        "\n${_isbnController.text.isEmpty ? "- ISBN Kode" : ""}"
+                        "\n${_priceController.text.isEmpty ? "- Pris" : ""}";
+                    final snackBarError = SnackBar(
+                      duration: Duration(seconds: 3),
                       backgroundColor: CustomColors.materialYellow,
                       content: Text(
-                        'Din bog er nu sat til salg!',
+                        'Venligst udfyld formularen korrekt. Du mangler: '
+                            '\n$missingFields'
+                            '\n'
+                            ''
+                            '',
                         style: montSerratFont(CustomColors.materialDarkGreen),
                       ),
                     );
-                    Scaffold.of(context).showSnackBar(snackBar);
-                  } else {
-                    //TODO: Display alertdialog with error
+                    Scaffold.of(context).showSnackBar(snackBarError);
                   }
                 },
                 color: CustomColors.materialYellow,
@@ -383,6 +406,13 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
         )
       ],
     );
+  }
+
+  bool _isNumeric(String str) {
+    if(str == null) {
+      return false;
+    }
+    return int.tryParse(str) != null;
   }
 
   Widget formObject(TextInputType textInputType, String type, IconData formIcon,
