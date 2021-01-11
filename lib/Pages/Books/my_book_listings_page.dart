@@ -380,12 +380,9 @@ class _MyBooksListViewState extends State<MyBooksListView> {
   Future<void> _imgFromGallery(ImageSource source) async {
     try {
       PickedFile pickedImage = await _picker.getImage(source: source);
-      print("Returning from gallery");
-      print("File path: ${pickedImage.path}");
       setState(() {
         _image = FileImage(File(pickedImage.path));
         _pickedImage = File(pickedImage.path);
-        print("File has been picked");
       });
     } catch (e) {
       print(e);
@@ -453,9 +450,19 @@ class _MyBooksListViewState extends State<MyBooksListView> {
                 child: CustomTextStyle("Slet Annonce", 16, Colors.red),
                 onPressed: () async {
                   print("Attempting to delete '${book.bookTitle}'");
-                  await _fireStoreService.deleteBookListing(book.bookTitle);
-                  getBooks();
-                  Navigator.of(context).pop();
+                  bool result = await _fireStoreService.deleteBookListing(book.bookTitle);
+                  if(result){
+                    getBooks();
+                    Navigator.of(context).pop();
+                    final snackBar = SnackBar(
+                      backgroundColor: CustomColors.materialYellow,
+                      content: Text(
+                        'Din bog samt tilhørende samtaler er nu fjernet fra bookversity!',
+                        style: montSerratFont(CustomColors.materialDarkGreen),
+                      ),
+                    );
+                    Scaffold.of(context).showSnackBar(snackBar);
+                  }
                 },
               ),
               FlatButton(
@@ -468,5 +475,8 @@ class _MyBooksListViewState extends State<MyBooksListView> {
             ],
           );
         });
+  }
+  montSerratFont(Color color) {
+    return TextStyle(color: color, fontFamily: "Montserrat", fontSize: 20);
   }
 }

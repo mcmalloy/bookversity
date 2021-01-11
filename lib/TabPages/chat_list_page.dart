@@ -229,8 +229,6 @@ class _ChatListState extends State<ChatList> {
   }
 
   String lastMessageDateString(DateTime lastActivityDate){
-    String day = lastActivityDate.day.toString();
-    String month = lastActivityDate.month.toString();
     String hour = lastActivityDate.hour.toString();
     String minute = lastActivityDate.minute.toString();
     return "${hour}:${minute}";

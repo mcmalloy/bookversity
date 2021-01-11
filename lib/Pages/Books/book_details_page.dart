@@ -6,6 +6,7 @@ import 'package:bookversity/Pages/Chats/chat_details_page.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firebase_chat_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class BookDetailsPage extends StatefulWidget {
@@ -33,31 +34,43 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     return Scaffold(
       backgroundColor: CustomColors.materialLightGreen,
       body: Container(
-        child: Stack(
-          children: [Column(
-          children: [
-            customSpace(),
-            topBar(),
-            SizedBox(
-              height: 40,
-            ),
-            bookBody(),
-            SizedBox(
-              height: 80,
-            ),
-            contactSellerButton(),
-            
-          ],
-        ),
-        _showChatBox ?
-             Container(color: Colors.grey.withOpacity(0.7))
-             : Container(height: 0,),
-             Container(
-
-               child: createChatBox(),)
+          child: Stack(
+        children: [
+          Column(
+            children: [
+              customSpace(),
+              topBar(),
+              SizedBox(
+                height: 40,
+              ),
+              Expanded(
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 30, bottom: 120),
+                      child: bookBody(),
+                    ),
+                    Positioned(
+                      bottom: 100,
+                      child: contactSellerButton(),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+          _showChatBox
+              ? Container(color: Colors.grey.withOpacity(0.7))
+              : Container(
+                  height: 0,
+                ),
+          Container(
+            child: createChatBox(),
+          )
         ],
-        )
-      ),
+      )),
     );
   }
 
@@ -111,8 +124,8 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 padding: textSeparatorPadding(),
               ),
               Container(
-                child: CustomTextStyle(
-                    "Pris: ${book.price}", 16, CustomColors.materialDarkGreen),
+                child: CustomTextStyle("Pris: ${book.price}kr", 16,
+                    CustomColors.materialDarkGreen),
                 padding: textSeparatorPadding(),
               ),
               Container(
@@ -121,6 +134,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 padding: textSeparatorPadding(),
               ),
               Container(
+                padding: EdgeInsets.only(bottom: 10),
                 height: 300,
                 child: Image.network(imageURL),
               ),
@@ -221,8 +235,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                       fontSize: 22.0,
                       color: CustomColors.materialDarkGreen),
                 ),
-                onChanged: (controller) {
-                },
+                onChanged: (controller) {},
               )),
         ),
         Container(height: 1, color: Colors.grey[400]),
@@ -234,8 +247,8 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
               });
               String uid = _authService.getCurrentUser().uid;
               print("buyerID is: $uid");
-              bool uploadResult = await chatService.createChat(
-                  book.userID, uid, firstMessageController.text, imageURL, book.bookTitle);
+              bool uploadResult = await chatService.createChat(book.userID, uid,
+                  firstMessageController.text, imageURL, book.bookTitle);
               if (uploadResult) {
                 //TODO: Finish loading animation and pop container
                 setState(() {
@@ -259,6 +272,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     String uid = _authService.getCurrentUser().uid;
     String chatID = "${book.userID}-${uid}-${book.bookTitle}";
     Chat chat = await chatService.fetchChat(chatID);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailsPage(chat)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => ChatDetailsPage(chat)));
   }
 }
