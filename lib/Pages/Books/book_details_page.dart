@@ -119,7 +119,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                child: CustomTextStyle("Bogtitel: ${book.bookTitle}", 16,
+                child: CustomTextStyle("${book.bookTitle}", 20,
                     CustomColors.materialDarkGreen),
                 padding: textSeparatorPadding(),
               ),

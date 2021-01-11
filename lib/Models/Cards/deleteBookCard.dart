@@ -33,7 +33,7 @@ class _DeleteBookCardState extends State<DeleteBookCard> {
         child: Card(
             margin: EdgeInsets.all(15),
             shape: shape,
-            color: Colors.purple,
+            color:Colors.red[700],
             child: leftRow(book)));
   }
 
