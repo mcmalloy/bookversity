@@ -141,7 +141,7 @@ class FireStoreService {
         String deletePath = result.docs[i].reference.toString();
         print("Found $bookTitle ... deleting...");
         print(deletePath);
-        //await deleteChatIfExists(result.docs[i]);
+        await deleteChatIfExists(documents[i].get("bookTitle"));
         await result.docs[i].reference.delete(); // Delete documents
         await FirebaseStorage.instance.ref().child(uid).child(bookTitle).delete();
         break;
@@ -153,17 +153,14 @@ class FireStoreService {
     imageLocation = FirebaseStorage.instance.ref().child(id).child(bookTitle);
     imageLocation.delete();
   }
-  Future<void> deleteChatIfExists(QueryDocumentSnapshot bookDocument) async {
+  Future<void> deleteChatIfExists(String bookTitle) async {
     String uid = _authService.getCurrentUser().uid;
-    String bookTitle = bookDocument.get("bookTitle");
-    String buyerID = bookDocument.get("buyerID");
-    print("deletePath: ${uid}-${buyerID}-$bookTitle");
     FirebaseFirestore rootRef = FirebaseFirestore.instance;
     CollectionReference booksReference = rootRef.collection("chats");
     final QuerySnapshot result = await booksReference.get();
     final List<DocumentSnapshot> documents = result.docs;
     for(int i = 0; i<documents.length; i++){
-      if(documents[i].get("chatID") == "${uid}-${buyerID}-$bookTitle"){
+      if(documents[i].get("chatID") == "${uid}-${documents[i].get("buyerID")}-$bookTitle"){
         String deletePath = result.docs[i].reference.toString();
         print("delete path for chat: "+deletePath);
         await result.docs[i].reference.delete(); // Delete documents

@@ -49,19 +49,17 @@ class _MyBooksListViewState extends State<MyBooksListView> {
   }
 
   Future<void> getBooks() async {
-    new Timer(Duration(milliseconds: 40), () async {
-      showProgressIndicator(true);
-      List<Book> books = await _fireStoreService.getMyBooks();
-      if (books.isNotEmpty) {
-        setState(() {
-          showProgressIndicator(false);
-          booksForSale = books;
-          getBookImageURLs();
-        });
-      } else {
-        showProgressIndicator(false);
-      }
-    });
+    showProgressIndicator(true);
+    List<Book> books = await _fireStoreService.getMyBooks();
+    print("Is books empty: " + books.isEmpty.toString());
+    if (books.isNotEmpty) {
+      setState(() {
+        booksForSale = books;
+        getBookImageURLs();
+      });
+    } else {
+      showProgressIndicator(false);
+    }
   }
 
   Future<void> getBookImageURLs() async {
@@ -80,30 +78,23 @@ class _MyBooksListViewState extends State<MyBooksListView> {
     return Scaffold(
         backgroundColor: CustomColors.materialLightGreen,
         body: Container(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 60,
-                  width: double.infinity,
-                  child: Container(color: Colors.white),
-                ),
-                topBar(),
-                isLoading
-                    ? Expanded(
-                  flex: 10,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: CustomColors.materialYellow,
-                    ),
-                  ),
-                )
-                    : _loadedContent(),
-              ],
+          child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 60,
+              width: double.infinity,
+              child: Container(color: Colors.white),
             ),
-          )
+            topBar(),
+            isLoading
+                ?
+            Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: CustomColors.materialYellow,
+                )) : _loadedContent(),
+          ],
+        ),
         ));
   }
 
@@ -169,7 +160,7 @@ class _MyBooksListViewState extends State<MyBooksListView> {
   Widget booksListView() {
     return Expanded(
       flex: 10,
-      child: ListView.builder(
+      child: new ListView.builder(
           shrinkWrap: true,
           itemCount: booksForSale.length,
           padding: const EdgeInsets.all(0),
@@ -199,7 +190,9 @@ class _MyBooksListViewState extends State<MyBooksListView> {
 
   Widget deleteBookItemButton() {
     return RaisedButton(
-      onPressed: () {},
+      onPressed: () {
+
+      },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       color: CustomColors.materialYellow,
       elevation: 3.0,
