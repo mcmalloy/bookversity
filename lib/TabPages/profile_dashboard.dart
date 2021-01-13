@@ -52,54 +52,62 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
     }
   }
 
+  Future<bool> closeCreateListing() {
+    setState(() {
+      _showAdBox = false;
+      return true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        resizeToAvoidBottomPadding: false,
-        backgroundColor: CustomColors.materialLightGreen,
-        body: SafeArea(
-            bottom: true,
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 20,
+    Scaffold(
+      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: CustomColors.materialLightGreen,
+      body: SafeArea(
+          bottom: true,
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  new Image(
+                    alignment: Alignment.topLeft,
+                    height: 80,
+                    width: 80,
+                    fit: BoxFit.fill,
+                    image: new AssetImage(
+                        'assets/bookversity_facebook_profile.png'),
+                  ),
+                  Flexible(
+                    flex: 2,
+                    child: centerDashBoardWidget(),
+                  ),
+                  Flexible(
+                    flex: 2,
+                    child: topDashBoardWidgets(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 65),
+                    child: logoutButton(),
+                  )
+                ],
+              ),
+              _showAdBox
+                  ? Container(color: Colors.grey.withOpacity(0.9))
+                  : Container(
+                      height: 0,
                     ),
-                    new Image(
-                      alignment: Alignment.topLeft,
-                      height: 80,
-                      width: 80,
-                      fit: BoxFit.fill,
-                      image: new AssetImage(
-                          'assets/bookversity_facebook_profile.png'),
-                    ),
-                    Flexible(
-                      flex: 2,
-                      child: centerDashBoardWidget(),
-                    ),
-                    Flexible(
-                      flex: 2,
-                      child: topDashBoardWidgets(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 65),
-                      child: logoutButton(),
-                    )
-                  ],
-                ),
-                _showAdBox
-                    ? Container(color: Colors.grey.withOpacity(0.9))
-                    : Container(
-                        height: 0,
-                      ),
-                Container(
-                  child: createListingBox(),
-                )
-              ],
-            )));
+              Container(
+                child: createListingBox(),
+              )
+            ],
+          )),
+    );
   }
 
   Widget topDashBoardWidgets() {
@@ -341,8 +349,10 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                 onPressed: () async {
                   // Create book object
                   if ((_bookNameController.text.isNotEmpty &&
-                      (_isbnController.text.isNotEmpty && _isNumeric(_isbnController.text)) &&
-                      (_priceController.text.isNotEmpty && _isNumeric(_priceController.text))&&
+                      (_isbnController.text.isNotEmpty &&
+                          _isNumeric(_isbnController.text)) &&
+                      (_priceController.text.isNotEmpty &&
+                          _isNumeric(_priceController.text)) &&
                       _pickedImage != null)) {
                     Book book = new Book(
                         _bookNameController.text,
@@ -375,7 +385,8 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                       //TODO: Display alertdialog with error
                     }
                   } else {
-                    String missingFields = "${_bookNameController.text.isEmpty ? "- Bogtitel" : ""}"
+                    String missingFields =
+                        "${_bookNameController.text.isEmpty ? "- Bogtitel" : ""}"
                         "\n${_isbnController.text.isEmpty ? "- ISBN Kode" : ""}"
                         "\n${_priceController.text.isEmpty ? "- Pris" : ""}";
                     final snackBarError = SnackBar(
@@ -383,10 +394,10 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                       backgroundColor: CustomColors.materialYellow,
                       content: Text(
                         'Venligst udfyld formularen korrekt. Du mangler: '
-                            '\n$missingFields'
-                            '\n'
-                            ''
-                            '',
+                        '\n$missingFields'
+                        '\n'
+                        ''
+                        '',
                         style: montSerratFont(CustomColors.materialDarkGreen),
                       ),
                     );
@@ -409,7 +420,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
   }
 
   bool _isNumeric(String str) {
-    if(str == null) {
+    if (str == null) {
       return false;
     }
     return int.tryParse(str) != null;
