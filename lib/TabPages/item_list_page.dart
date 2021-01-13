@@ -116,7 +116,6 @@ class _ItemListState extends State<ItemList> {
           padding: const EdgeInsets.all(0),
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
-            if (index % 2 == 0) {
               return BookCard(
                   booksForSale[index],
                   _shapes.customListShapeRight(),
@@ -124,11 +123,7 @@ class _ItemListState extends State<ItemList> {
                   bookImageURLs[index],
                 false
               );
-            } else {
-              // Switch to left or create symmetry later on
-              return BookCard(booksForSale[index],
-                  _shapes.customListShapeLeft(), "right", bookImageURLs[index],false);
-            }
+
           }),
     );
   }
