@@ -119,8 +119,8 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                child: CustomTextStyle("${book.bookTitle}", 20,
-                    CustomColors.materialDarkGreen),
+                child: CustomTextStyle(
+                    "${book.bookTitle}", 20, CustomColors.materialDarkGreen),
                 padding: textSeparatorPadding(),
               ),
               Container(
@@ -176,6 +176,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
       curve: Curves.easeInOutCubic,
       child: SingleChildScrollView(
         child: Container(
+          height: 200,
           decoration: BoxDecoration(
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(20),
@@ -187,7 +188,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   IconButton(
-                    padding: EdgeInsets.only(top: 18, left: 25),
+                    padding: EdgeInsets.only(left: 5),
                     iconSize: 34,
                     icon: Icon(Icons.keyboard_return),
                     onPressed: () {
@@ -210,12 +211,12 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 20, bottom: 20, left: 25, right: 25),
+          padding: EdgeInsets.only(top: 2, bottom: 20, left: 25, right: 25),
           child: Container(
               padding: EdgeInsets.only(left: 5),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.grey.withOpacity(0.5)),
+                  color: Colors.grey.withOpacity(0.3)),
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: firstMessageController,
@@ -227,7 +228,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.message,
-                    color: Colors.black,
+                    color: CustomColors.materialDarkGreen,
                     size: 22.0,
                   ),
                   hintStyle: TextStyle(
@@ -240,6 +241,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         ),
         Container(height: 1, color: Colors.grey[400]),
         RaisedButton(
+            shape: _shapes.customButtonShape(),
             onPressed: () async {
               // Create chat object
               setState(() {
@@ -263,7 +265,13 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
             color: CustomColors.materialYellow,
             child: _showUploadIndicator
                 ? CircularProgressIndicator()
-                : Text("Send Besked"))
+                : Text(
+                    "Send Besked",
+                    style: TextStyle(
+                        fontFamily: "Montserrat",
+                        fontSize: 16.0,
+                        color: CustomColors.materialDarkGreen),
+                  )),
       ],
     );
   }
