@@ -126,7 +126,8 @@ class _ChatListState extends State<ChatList> {
             children: [
               Padding(padding: EdgeInsets.symmetric(vertical: 4),),
               Container(
-                color: Colors.white,
+                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(32)),
+                    color: Colors.white),
                 padding: EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 15,
@@ -193,7 +194,7 @@ class _ChatListState extends State<ChatList> {
                                   lastMessageDateString(chatList[index].lastActivityDate),
                                   style: TextStyle(
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w300,
+                                    fontWeight: FontWeight.w700,
                                     color: Colors.black54,
                                   ),
                                 ),

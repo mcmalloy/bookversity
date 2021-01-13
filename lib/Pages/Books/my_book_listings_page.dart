@@ -34,13 +34,21 @@ class _MyBooksListViewState extends State<MyBooksListView> {
   final TextEditingController _bookNameController = TextEditingController();
   final TextEditingController _isbnController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     listingType = ListingType.myBooksForSale;
+    showProgressIndicator(true);
     getBooks();
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
 
   showProgressIndicator(bool show) {
     setState(() {
@@ -49,11 +57,10 @@ class _MyBooksListViewState extends State<MyBooksListView> {
   }
 
   Future<void> getBooks() async {
-    showProgressIndicator(true);
     List<Book> books = await _fireStoreService.getMyBooks();
-    print("Is books empty: " + books.isEmpty.toString());
     if (books.isNotEmpty) {
       setState(() {
+        booksForSale.clear();
         booksForSale = books;
         getBookImageURLs();
       });
@@ -178,8 +185,8 @@ class _MyBooksListViewState extends State<MyBooksListView> {
           "left", bookImageURLs[index], true);
     } else if (listingType == ListingType.deleteBooksForSale) {
       return InkWell(
-        onTap: () {
-          deleteDialog(booksForSale[index], context);
+        onTap: () async {
+          await deleteDialog(booksForSale[index], context);
         },
         child: DeleteBookCard(booksForSale[index],
             _shapes.customListShapeLeft(), bookImageURLs[index]),
@@ -431,7 +438,7 @@ class _MyBooksListViewState extends State<MyBooksListView> {
         ));
   }
 
-  void deleteDialog(Book book, BuildContext context) {
+  Future<void> deleteDialog(Book book, BuildContext context) {
     showDialog(
         context: context,
         builder: (context) {
@@ -449,19 +456,17 @@ class _MyBooksListViewState extends State<MyBooksListView> {
               FlatButton(
                 child: CustomTextStyle("Slet Annonce", 16, Colors.red),
                 onPressed: () async {
+                  Navigator.of(context).pop();
                   print("Attempting to delete '${book.bookTitle}'");
                   bool result = await _fireStoreService.deleteBookListing(book.bookTitle);
+                  print("Result of deletion: result");
                   if(result){
-                    getBooks();
-                    Navigator.of(context).pop();
-                    final snackBar = SnackBar(
-                      backgroundColor: CustomColors.materialYellow,
-                      content: Text(
-                        'Din bog samt tilhørende samtaler er nu fjernet fra bookversity!',
-                        style: montSerratFont(CustomColors.materialDarkGreen),
-                      ),
-                    );
-                    Scaffold.of(context).showSnackBar(snackBar);
+                    setState(() {
+                      isDeleting = false;
+                      booksForSale.removeWhere((books) => books.bookTitle == book.bookTitle);
+                    });
+                    //showSnackBar();
+                    //getBooks();
                   }
                 },
               ),
@@ -475,6 +480,20 @@ class _MyBooksListViewState extends State<MyBooksListView> {
             ],
           );
         });
+  }
+
+  void showSnackBar(){
+    Scaffold.of(context).showSnackBar(getSnackbar());
+  }
+
+  Widget getSnackbar(){
+    return SnackBar(
+      backgroundColor: CustomColors.materialYellow,
+      content: Text(
+        'Din bog samt tilhørende samtaler er nu fjernet fra bookversity!',
+        style: montSerratFont(CustomColors.materialDarkGreen),
+      ),
+    );
   }
   montSerratFont(Color color) {
     return TextStyle(color: color, fontFamily: "Montserrat", fontSize: 20);

@@ -115,7 +115,6 @@ class FireStoreService {
 
     final QuerySnapshot result = await booksReference.get();
     final List<DocumentSnapshot> documents = result.docs;
-    print("match with UID: $uid");
     for(int i = 0; i<documents.length; i++){
         bookList.add(new Book(
             documents[i].get("bookTitle"),
@@ -144,9 +143,10 @@ class FireStoreService {
         await deleteChatIfExists(documents[i].get("bookTitle"));
         await result.docs[i].reference.delete(); // Delete documents
         await FirebaseStorage.instance.ref().child(uid).child(bookTitle).delete();
-        break;
+        return true;
       }
     }
+    return false;
   }
   Future<void> deleteBookFromStorage(String bookTitle, String id) async {
     StorageReference imageLocation;

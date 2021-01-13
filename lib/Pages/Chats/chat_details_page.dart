@@ -67,8 +67,8 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         padding: EdgeInsets.only(left: 16, bottom: 5, right: 12),
         child: CustomTextStyle(
             chat.buyerID == uid
-                ? "Køb af ${chat.bookTitle}"
-                : "Salg af ${chat.bookTitle}",
+                ? "Køb af '${chat.bookTitle}'"
+                : "Salg af '${chat.bookTitle}'",
             32,
             CustomColors.materialDarkGreen));
   }
