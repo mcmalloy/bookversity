@@ -4,41 +4,42 @@ import 'package:flutter/material.dart';
 
 class ButtonSwitcher extends CustomPainter {
   Paint painter;
-  final double dxTarget;
-  final double dxEntry;
+  final double horizontalTarget;
+  final double horizontalStart;
   final double radius;
   final double dy;
 
   final PageController pageController;
-  // Size of white button area is dxTarget = (Width - 2 dxEntry) / 2
-  // dxEntry is the spacing on both sides of transparent container
+  // Size of white button area is horizontalTarget = (Width - 2 dxEntry) / 2
+  // horizontalStart is the spacing on both sides of transparent container
   ButtonSwitcher(
-      {this.dxTarget = 140.0,
-        this.dxEntry = 25.0,
+      {this.horizontalTarget = 140.0,
+        this.horizontalStart = 25.0,
         this.radius = 21.0,
         this.dy = 25.0, this.pageController}) : super(repaint: pageController) {
     painter = new Paint()
-      ..color = Color(0xFFFFFFFF)
+      ..color = Color(0xFFFFFFFF) // white
       ..style = PaintingStyle.fill;
   }
 
   @override
   void paint(Canvas canvas, Size size) {
 
-    final pos = pageController.position;
-    double fullExtent = (pos.maxScrollExtent - pos.minScrollExtent + pos.viewportDimension);
+    final position = pageController.position;
+    double fullExtent = (position.maxScrollExtent - position.minScrollExtent + position.viewportDimension);
 
-    double pageOffset = pos.extentBefore / fullExtent;
+    double pageOffset = position.extentBefore / fullExtent;
 
-    bool left2right = dxEntry < dxTarget;
-    Offset entry = new Offset(left2right ? dxEntry: dxTarget, dy);
-    Offset target = new Offset(left2right ? dxTarget : dxEntry, dy);
+    bool moveToSignUp = horizontalStart < horizontalTarget;
+    Offset start = new Offset(moveToSignUp ? horizontalStart: horizontalTarget, dy);
+    Offset target = new Offset(moveToSignUp ? horizontalTarget : horizontalStart, dy);
 
+    // Using Rect math inspired by https://github.com/huextrat/TheGorgeousLogin/blob/master/lib/utils/bubble_indication_painter.dart
     Path path = new Path();
     path.addArc(
-        new Rect.fromCircle(center: entry, radius: radius), 0.5 * pi, 1 * pi);
+        new Rect.fromCircle(center: start, radius: radius), 0.5 * pi, 1 * pi);
     path.addRect(
-        new Rect.fromLTRB(entry.dx, dy - radius, target.dx, dy + radius));
+        new Rect.fromLTRB(start.dx, dy - radius, target.dx, dy + radius));
     path.addArc(
         new Rect.fromCircle(center: target, radius: radius), 1.5 * pi, 1 * pi);
 

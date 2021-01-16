@@ -4,6 +4,7 @@ import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Models/Objects/book.dart';
 import 'package:bookversity/Pages/Books/my_book_listings_page.dart';
+import 'package:bookversity/Services/api_service.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Services/state_storage.dart';
@@ -24,6 +25,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
   AuthService _authService = AuthService();
   FireStoreService _fireStoreService = FireStoreService();
   final StateStorageService _storageService = StateStorageService();
+  ApiService apiService = ApiService();
   CustomShapes _shapes = CustomShapes();
   LoginType _type;
   final TextEditingController _bookNameController = TextEditingController();
@@ -348,8 +350,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                 onPressed: () async {
                   // Create book object
                   if ((_bookNameController.text.isNotEmpty &&
-                      (_isbnController.text.isNotEmpty &&
-                          _isNumeric(_isbnController.text)) &&
+                      _isbnController.text.isNotEmpty &&
                       (_priceController.text.isNotEmpty &&
                           _isNumeric(_priceController.text)) &&
                       _pickedImage != null)) {
@@ -361,27 +362,45 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                         _pickedImage,
                         null);
                     //TODO: Set loading animation
-                    setState(() {
-                      _showUploadIndicator = true;
-                    });
-                    bool uploadResult =
-                        await _fireStoreService.uploadBook(book);
-                    if (uploadResult) {
-                      //TODO: Finish loading animation and pop container
+                    bool isbnCheck =
+                        await apiService.checkISBN(_isbnController.text);
+                    print("isbnCheck status: $isbnCheck");
+                    if (isbnCheck) {
                       setState(() {
-                        _showAdBox = !_showAdBox;
-                        _showUploadIndicator = !_showUploadIndicator;
+                        _showUploadIndicator = true;
+                      });
+                      bool uploadResult =
+                          await _fireStoreService.uploadBook(book);
+                      if (uploadResult) {
+                        //TODO: Finish loading animation and pop container
+                        setState(() {
+                          _showAdBox = !_showAdBox;
+                          _showUploadIndicator = !_showUploadIndicator;
+                        });
+                        final snackBar = SnackBar(
+                          backgroundColor: CustomColors.materialYellow,
+                          content: Text(
+                            'Din bog er nu sat til salg!',
+                            style:
+                                montSerratFont(CustomColors.materialDarkGreen),
+                          ),
+                        );
+                        Scaffold.of(context).showSnackBar(snackBar);
+                      }
+                    }
+                    else{
+                      setState(() {
+                        _showUploadIndicator = false;
                       });
                       final snackBar = SnackBar(
                         backgroundColor: CustomColors.materialYellow,
                         content: Text(
-                          'Din bog er nu sat til salg!',
-                          style: montSerratFont(CustomColors.materialDarkGreen),
+                          'Din ISBN kode kunne ikke verificeres',
+                          style:
+                          montSerratFont(CustomColors.materialDarkGreen),
                         ),
                       );
                       Scaffold.of(context).showSnackBar(snackBar);
-                    } else {
-                      //TODO: Display alertdialog with error
                     }
                   } else {
                     String missingFields =
@@ -393,10 +412,10 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                       backgroundColor: CustomColors.materialYellow,
                       content: Text(
                         'Venligst udfyld formularen korrekt. Du mangler: '
-                        '\n$missingFields'
-                        '\n'
-                        ''
-                        '',
+                            '\n$missingFields'
+                            '\n'
+                            ''
+                            '',
                         style: montSerratFont(CustomColors.materialDarkGreen),
                       ),
                     );
@@ -452,9 +471,6 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                 fontSize: 22.0,
                 color: CustomColors.materialDarkGreen),
           ),
-          onChanged: (controller) {
-            print("Changed ${controller.toString()}");
-          },
         ));
   }
 

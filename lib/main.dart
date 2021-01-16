@@ -1,6 +1,6 @@
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Pages/Chats/chat_list_page.dart';
-import 'package:bookversity/landing_page.dart';
+import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Pages/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';

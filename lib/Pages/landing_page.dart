@@ -5,7 +5,7 @@ import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Services/auth.dart';
 import 'package:bookversity/Widgets/dialogs.dart';
 import 'package:bookversity/Widgets/shapes.dart';
-import 'package:bookversity/tab_pages.dart';
+import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Pages/tab_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:bookversity/Constants/custom_colors.dart';

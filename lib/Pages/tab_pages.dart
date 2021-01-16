@@ -2,8 +2,8 @@ import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/enums.dart';
 import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Pages/Profile/profile_dashboard.dart';
 import 'package:flutter/services.dart';
-import 'Pages/Chats/chat_list_page.dart';
-import 'Pages/Books/book_list_page.dart';
+import 'Chats/chat_list_page.dart';
+import 'Books/book_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
