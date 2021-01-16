@@ -129,6 +129,27 @@ class FireStoreService {
     return bookList;
   }
 
+  Future<List<Book>> getBooksSortedByPrice(bool cheapToExpensive) async {
+    String uid = _authService.getCurrentUser().uid;
+    List<Book> bookList = new List();
+    FirebaseFirestore rootRef = FirebaseFirestore.instance;
+    CollectionReference booksReference = rootRef.collection("booksForSale");
+    final QuerySnapshot result = await booksReference.orderBy("price",descending: cheapToExpensive ? false : true).get();
+    final List<DocumentSnapshot> documents = result.docs;
+    for(int i = 0; i<documents.length; i++){
+      bookList.add(new Book(
+          documents[i].get("bookTitle"),
+          documents[i].get("isbnCode"),
+          documents[i].get("price"),
+          documents[i].get("bookOwnerUID"),
+          null, // Get the picture of the book from storage
+          documents[i].get("imageURL")
+      ));
+    }
+    booksForSale = bookList;
+    return bookList;
+  }
+
   Future<bool> deleteBookListing(String bookTitle) async {
     String uid = _authService.getCurrentUser().uid;
     FirebaseFirestore rootRef = FirebaseFirestore.instance;

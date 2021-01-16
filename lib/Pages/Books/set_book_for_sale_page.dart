@@ -147,7 +147,7 @@ class _CreateListingBoxState extends State<CreateListingBox> {
                   Book book = new Book(
                       _bookNameController.text,
                       _isbnController.text,
-                      _priceController.text,
+                      int.parse(_priceController.text),
                       _authService.getCurrentUser().uid,
                       _pickedImage,
                       null);

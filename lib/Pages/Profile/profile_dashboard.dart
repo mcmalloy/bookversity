@@ -61,9 +61,8 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
 
   @override
   Widget build(BuildContext context) {
-    Scaffold(
+    return Scaffold(
       resizeToAvoidBottomInset: false,
-      resizeToAvoidBottomPadding: false,
       backgroundColor: CustomColors.materialLightGreen,
       body: SafeArea(
           bottom: true,
@@ -357,7 +356,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                     Book book = new Book(
                         _bookNameController.text,
                         _isbnController.text,
-                        _priceController.text,
+                        int.parse(_priceController.text),
                         _authService.getCurrentUser().uid,
                         _pickedImage,
                         null);
@@ -512,7 +511,7 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                       children: <Widget>[
                         Text("Book Title: " + lists[index].bookTitle),
                         Text("ISBN Code: " + lists[index].isbnCode),
-                        Text("Price: " + lists[index].price),
+                        Text("Price: " + lists[index].price.toString()),
                       ],
                     ),
                   );

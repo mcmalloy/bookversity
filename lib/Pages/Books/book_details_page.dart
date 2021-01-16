@@ -32,6 +32,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: CustomColors.materialLightGreen,
       body: Container(
           child: Stack(
@@ -176,7 +177,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
       curve: Curves.easeInOutCubic,
       child: SingleChildScrollView(
         child: Container(
-          height: 200,
+          height: 240,
           decoration: BoxDecoration(
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(20),
@@ -218,6 +219,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.grey.withOpacity(0.3)),
               child: TextFormField(
+                maxLines: 3,
                 keyboardType: TextInputType.text,
                 controller: firstMessageController,
                 style: TextStyle(
@@ -240,6 +242,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
               )),
         ),
         Container(height: 1, color: Colors.grey[400]),
+        Container(height: 14,),
         RaisedButton(
             shape: _shapes.customButtonShape(),
             onPressed: () async {

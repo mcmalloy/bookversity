@@ -1,6 +1,6 @@
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
-import 'package:bookversity/TabPages/profile_dashboard.dart';
+import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Pages/Profile/profile_dashboard.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:flutter/material.dart';
 

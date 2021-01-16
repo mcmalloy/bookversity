@@ -332,7 +332,7 @@ class _MyBooksListViewState extends State<MyBooksListView> {
                   Book book = new Book(
                       _bookNameController.text,
                       _isbnController.text,
-                      _priceController.text,
+                      int.parse(_priceController.text),
                       _authService.getCurrentUser().uid,
                       _pickedImage,
                       null);

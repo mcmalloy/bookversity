@@ -4,7 +4,7 @@ class Book{
 
   String bookTitle;
   String isbnCode;
-  String price;
+  int price;
   String userID;
   File bookImage;
   String imageURL;
@@ -21,7 +21,7 @@ class Book{
   Book.fromJson(Map<String, dynamic> json)
   : bookTitle = json['bookTitle'],
   isbnCode = json['isbnCode'],
-  price = json['price'],
+  price = int.parse(json['price']),
   userID = json['userID'],
   imageURL = json['imageURL'];
 
