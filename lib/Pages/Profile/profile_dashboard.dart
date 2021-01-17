@@ -5,7 +5,7 @@ import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Models/Objects/book.dart';
 import 'package:bookversity/Pages/Books/my_book_listings_page.dart';
 import 'package:bookversity/Services/api_service.dart';
-import 'package:bookversity/Services/auth.dart';
+import 'package:bookversity/Services/auth_service.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Services/state_storage.dart';
 import 'package:bookversity/Widgets/shapes.dart';
@@ -362,10 +362,10 @@ class _ProfileDashBoardState extends State<ProfileDashBoard> {
                         _pickedImage,
                         null);
                     //TODO: Set loading animation
-                    bool isbnCheck =
+                    bool isbnResult =
                         await apiService.checkISBN(_isbnController.text);
-                    print("isbnCheck status: $isbnCheck");
-                    if (isbnCheck) {
+                    print("isbnResult status: $isbnResult");
+                    if (isbnResult) {
                       setState(() {
                         _showUploadIndicator = true;
                       });

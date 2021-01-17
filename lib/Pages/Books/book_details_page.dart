@@ -3,7 +3,7 @@ import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Models/Objects/book.dart';
 import 'package:bookversity/Models/Objects/chat.dart';
 import 'package:bookversity/Pages/Chats/chat_details_page.dart';
-import 'package:bookversity/Services/auth.dart';
+import 'package:bookversity/Services/auth_service.dart';
 import 'package:bookversity/Services/firebase_chat_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:flutter/cupertino.dart';
@@ -251,7 +251,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 _showUploadIndicator = true;
               });
               String uid = _authService.getCurrentUser().uid;
-              print("buyerID is: $uid");
               bool uploadResult = await chatService.createChat(book.userID, uid,
                   firstMessageController.text, imageURL, book.bookTitle);
               if (uploadResult) {
@@ -262,7 +261,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 });
                 navigateToChatDetail();
               } else {
-                //TODO: Display alertdialog with error
+                //display alertDialog
               }
             },
             color: CustomColors.materialYellow,

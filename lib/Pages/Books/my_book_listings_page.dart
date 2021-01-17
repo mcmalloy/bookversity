@@ -7,7 +7,7 @@ import 'package:bookversity/Constants/enums.dart';
 import 'package:bookversity/Models/Cards/bookCard.dart';
 import 'package:bookversity/Models/Cards/deleteBookCard.dart';
 import 'package:bookversity/Models/Objects/book.dart';
-import 'package:bookversity/Services/auth.dart';
+import 'package:bookversity/Services/auth_service.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'package:flutter/material.dart';

@@ -4,7 +4,7 @@ class ApiService {
   // https://www.googleapis.com/books/v1/volumes?q=${978-1-118-55421-0}&maxResults=39&startIndex=0
   Future<bool> checkISBN(String isbn) async {
     try{
-      var url = 'https://www.googleapis.com/books/v1/volumes?q=ISBN%${isbn}&maxResults=39&startIndex=0';
+      var url = 'https://www.googleapis.com/books/v1/volumes?q=ISBN%${isbn}&maxResults=5&startIndex=0';
       print("searching url: $url");
       var response = await http.get(url);
       print('Response status: ${response.statusCode}');

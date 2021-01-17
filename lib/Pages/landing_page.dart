@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:bookversity/Constants/button_switch_color_animation.dart';
 import 'package:bookversity/Constants/enums.dart';
-import 'package:bookversity/Services/auth.dart';
+import 'package:bookversity/Services/auth_service.dart';
 import 'package:bookversity/Widgets/dialogs.dart';
 import 'package:bookversity/Widgets/shapes.dart';
 import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Pages/tab_pages.dart';

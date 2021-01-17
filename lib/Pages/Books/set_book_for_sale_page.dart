@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Models/Objects/book.dart';
-import 'package:bookversity/Services/auth.dart';
+import 'package:bookversity/Services/auth_service.dart';
 import 'package:bookversity/Services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';

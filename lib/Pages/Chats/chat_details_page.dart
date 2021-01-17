@@ -2,7 +2,7 @@ import 'package:bookversity/Constants/custom_colors.dart';
 import 'package:bookversity/Constants/custom_textstyle.dart';
 import 'package:bookversity/Models/Objects/chat.dart';
 import 'package:bookversity/Models/Objects/message.dart';
-import 'package:bookversity/Services/auth.dart';
+import 'package:bookversity/Services/auth_service.dart';
 import 'package:bookversity/Services/firebase_chat_service.dart';
 import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Pages/Chats/chat_list_page.dart';
 import 'package:flutter/material.dart';

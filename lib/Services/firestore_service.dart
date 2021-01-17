@@ -2,7 +2,7 @@
 import 'dart:io';
 
 import 'package:bookversity/Models/Objects/book.dart';
-import 'package:bookversity/Services/auth.dart';
+import 'package:bookversity/Services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -109,10 +109,9 @@ class FireStoreService {
   }
   Future<List<Book>> getAllBooks() async {
     String uid = _authService.getCurrentUser().uid;
-    List<Book> bookList = new List();
+    List<Book> bookList = [];
     FirebaseFirestore rootRef = FirebaseFirestore.instance;
     CollectionReference booksReference = rootRef.collection("booksForSale");
-
     final QuerySnapshot result = await booksReference.get();
     final List<DocumentSnapshot> documents = result.docs;
     for(int i = 0; i<documents.length; i++){
