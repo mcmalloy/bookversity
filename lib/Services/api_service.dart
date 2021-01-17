@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:bookversity/Models/Objects/googleapis_isbn.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -10,17 +8,10 @@ class ApiService {
       var url = 'https://www.googleapis.com/books/v1/volumes?q=ISBN%{${isbn}}&maxResults=5&startIndex=0';
       print("searching url: $url");
       final response = await http.get(url);
-      /*
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-      print("body test: ${response.body[response.body.length-4]} and test statement: ${int.parse(response.body[response.body.length-4]) > 0}");
+      print(response.body);
       Map<String, dynamic> map = jsonDecode(response.body);
-      ISBNBody isbnBody = ISBNBody.fromJson(map);
-            print("totalItems: ${isbnBody.totalItems}");
-       */
-      //if(response.statusCode == 200 && int.parse(response.body[response.body.length-4]) > 0){
-      print("At symbol: "+response.body[45]);
-      if(response.statusCode == 200 && int.parse(response.body[45])>0){
+      print("Json: ${map['totalItems']}");
+      if(response.statusCode == 200 && int.parse(map['totalItems'])>0){
         return true;
       }
       return false;
