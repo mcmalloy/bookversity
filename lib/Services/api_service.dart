@@ -11,7 +11,9 @@ class ApiService {
       print(response.body);
       Map<String, dynamic> map = jsonDecode(response.body);
       print("Json: ${map['totalItems']}");
-      if(response.statusCode == 200 && int.parse(map['totalItems'])>0){
+      int totalItems = map['totalItems'];
+      print("totalItems: $totalItems");
+      if(response.statusCode == 200 &&  totalItems > 0){
         return true;
       }
       return false;
