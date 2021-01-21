@@ -226,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
           // TODO: LOG USER IN
           showProgressIndicator(false);
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => TabPages()));
+              context, MaterialPageRoute(builder: (context) => TabPages(selectedIndex: 0,)));
         } else {
           // TODO: Display facebook login error
         }

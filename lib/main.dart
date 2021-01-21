@@ -1,4 +1,5 @@
 import 'package:bookversity/Constants/custom_colors.dart';
+import 'package:bookversity/Pages/tab_pages.dart';
 import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Pages/Chats/chat_list_page.dart';
 import 'file:///C:/Users/Mark/StudioProjects/bookversity/lib/Pages/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
 
         ),
       routes: {
-          '/chatListPage' : (BuildContext context) => ChatList()
+          '/chatListPage' : (BuildContext context) => new TabPages(selectedIndex: 2,)
       },
     );
   }

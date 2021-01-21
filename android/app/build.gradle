@@ -46,8 +46,8 @@ android {
         applicationId "mcmalloy.bookversity"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 4
-        versionName "1.4.0"
+        versionCode 6
+        versionName "1.6.0"
         multiDexEnabled true
     }
 

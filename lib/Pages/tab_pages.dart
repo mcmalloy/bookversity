@@ -8,28 +8,34 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TabPages extends StatefulWidget {
+  final int selectedIndex;
+
+  const TabPages({Key key, this.selectedIndex}) : super(key: key);
+
   @override
-  _TabPagesState createState() => _TabPagesState();
+  _TabPagesState createState() => _TabPagesState(selectedIndex);
 }
 
 class _TabPagesState extends State<TabPages> {
-  int _selectedIndex = 0;
+  int selectedIndex;
+  _TabPagesState(this.selectedIndex);
+
 
   void onTabTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(child: DefaultTabController(
+      initialIndex: selectedIndex,
       length: 3,
       child: Scaffold(
         bottomNavigationBar: menu(),
         body: TabBarView(
           children: [
-            //ProfilePage(),
             ProfileDashBoard(),
             BookListPage(ListingType.allBooksForSale),
             ChatList()

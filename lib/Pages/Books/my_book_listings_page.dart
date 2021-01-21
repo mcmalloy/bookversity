@@ -464,6 +464,7 @@ class _MyBooksListViewState extends State<MyBooksListView> {
                     setState(() {
                       isDeleting = false;
                       booksForSale.removeWhere((books) => books.bookTitle == book.bookTitle);
+                      getBookImageURLs();
                     });
                     //showSnackBar();
                     //getBooks();

@@ -45,7 +45,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(child: Scaffold(
         backgroundColor: Color(0xffE7E7ED),
         body: SafeArea(
           child: Container(
@@ -54,7 +54,10 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             ),
           ),
         )
-    );
+    ), onWillPop: (){
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/chatListPage', (Route<dynamic> route) =>false);
+    });
   }
 
   Widget topBar() {
